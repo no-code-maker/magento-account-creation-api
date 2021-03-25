@@ -1,4 +1,4 @@
-package com.magento.account.creation.request;
+package com.magento.account.creation.model.request;
 
 import lombok.Data;
 

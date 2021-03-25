@@ -1,8 +1,8 @@
 package com.magento.account.creation.dao.impl;
 
 import com.magento.account.creation.dao.AccountCreationDao;
-import com.magento.account.creation.request.AccountCreationRequest;
-import com.magento.account.creation.response.AccountCreationResponse;
+import com.magento.account.creation.model.request.AccountCreationRequest;
+import com.magento.account.creation.model.response.AccountCreationResponse;
 import org.springframework.stereotype.Service;
 
 

@@ -1,4 +1,4 @@
-package com.magento.account.creation.response;
+package com.magento.account.creation.model.response;
 
 import com.magento.account.creation.model.Account;
 

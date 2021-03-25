@@ -2,7 +2,7 @@ package com.magento.account.creation.health;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import com.magento.account.creation.constant.AccountCreationConstants;
+import com.magento.account.creation.constants.AccountCreationConstants;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthContributor;
 import org.springframework.boot.actuate.health.HealthIndicator;

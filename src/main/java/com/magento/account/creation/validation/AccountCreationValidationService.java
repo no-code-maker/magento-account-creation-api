@@ -1,12 +1,12 @@
-package com.magento.account.creation.dao;
+package com.magento.account.creation.validation;
 
-import com.magento.account.creation.request.AccountCreationRequest;
+import com.magento.account.creation.model.request.AccountCreationRequest;
 
 /**
  * @author Rajeev Krishna
  * @description Validation Interface for Magento Account Creation Request.
  */
-public interface AccountCreationValidationDao {
+public interface AccountCreationValidationService {
 
     void validate(AccountCreationRequest accountCreationRequest);
 }
