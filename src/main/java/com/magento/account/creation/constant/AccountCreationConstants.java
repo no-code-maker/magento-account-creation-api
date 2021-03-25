@@ -11,4 +11,8 @@ import lombok.NoArgsConstructor;
 public class AccountCreationConstants {
 
     public static final String CORRELATION_ID = "correlation-id";
+
+    public static final String SERVICE_URL = "http://107.23.133.112/customer/account/create/";
+
+    public static final int CONNECTION_TIMEOUT = 5000;
 }
