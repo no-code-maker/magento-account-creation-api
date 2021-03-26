@@ -36,7 +36,7 @@ public class AccountCreationValidationServiceImpl implements AccountCreationVali
             if (!nameValue.matches("^[\\p{L} .'-]+$")){
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                        fieldName + AccountCreationConstants.FIELD_REGEX));
+                        fieldName + AccountCreationConstants.FIELD_REGEX + nameValue));
             }
         } else {
             throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
@@ -57,7 +57,7 @@ public class AccountCreationValidationServiceImpl implements AccountCreationVali
             if (!nameValue.matches("^[\\p{L} .'-]+$")){
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                        fieldName + AccountCreationConstants.FIELD_REGEX));
+                        fieldName + AccountCreationConstants.FIELD_REGEX + nameValue));
             }
         }
     }
@@ -72,7 +72,7 @@ public class AccountCreationValidationServiceImpl implements AccountCreationVali
         if(!EmailValidator.getInstance().isValid(email)) {
             throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                     AccountCreationConstants.ERR_CODE_VALIDATION +
-                    fieldName + AccountCreationConstants.FIELD_REGEX));
+                    fieldName + AccountCreationConstants.FIELD_REGEX + email));
         }
     }
 

@@ -21,4 +21,6 @@ public class AccountCreationRequest {
 
     String confirmPassword;
 
+    boolean subscribed;
+
 }
