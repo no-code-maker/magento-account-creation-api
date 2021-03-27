@@ -86,6 +86,12 @@ public class AccountCreationValidationServiceImpl implements AccountCreationVali
                        AccountCreationConstants.ERR_CODE_VALIDATION +
                        fieldName  + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
             }
+            if (password.length() < AccountCreationConstants.PASSWORD_MIN_FIELD_SIZE ||
+                    confirmPassword.length() < AccountCreationConstants.PASSWORD_MIN_FIELD_SIZE){
+                throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
+                        AccountCreationConstants.ERR_CODE_VALIDATION +
+                                fieldName  + AccountCreationConstants.ERR_FIELD_LENGTH_LOW));
+            }
 
             if (!password.equals(confirmPassword)){
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,

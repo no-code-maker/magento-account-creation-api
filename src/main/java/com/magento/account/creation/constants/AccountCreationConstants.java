@@ -28,10 +28,14 @@ public class AccountCreationConstants {
 
     public static final int STRING_FIELD_SIZE  = 100;
 
+    public static final int PASSWORD_MIN_FIELD_SIZE  = 6;
+
     //Error Handling
     public static final String ERR_CODE_VALIDATION = "Request Validation Failed: ";
 
     public static final String ERR_FIELD_LENGTH_HIGH = " field length is greater than defined value: " + STRING_FIELD_SIZE;
+
+    public static final String ERR_FIELD_LENGTH_LOW = " field length is less than defined value: 6";
 
     public static final String FIELD_REGEX = " field not matching valid pattern. Input provided: ";
 
