@@ -1,64 +1,48 @@
 package com.magenta.account.creation;
 
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
-import com.gargoylesoftware.htmlunit.html.HtmlEmailInput;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.magento.account.creation.constants.AccountCreationConstants;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.ProtocolException;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.http.impl.client.StandardHttpRequestRetryHandler;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.ExecutionContext;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.apache.http.util.TextUtils;
 import org.junit.Test;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.HttpCookie;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
 import java.util.UUID;
-
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 
 public class AccountCreationTest {
 
-    @Test
+   /* @Test
     public void testAdd() throws Exception{
        // HttpPost post = new HttpPost("http://107.23.133.112/customer/account/createpost/");
         URL url = new URL("http://107.23.133.112/customer/account/createpost/");
@@ -67,9 +51,10 @@ public class AccountCreationTest {
         Map<String, Object> data = new HashMap<>();
         data.put("firstname", "firstname");
         data.put("lastname", "lastname");
-        data.put("email_address", "firtest@last.com");
+        data.put("email", "firtest11@last.com");
         data.put("password", "123456");
-        data.put("confirmation", "12345");
+        data.put("confirmation", "123456");
+
 
         StringBuilder postData = new StringBuilder();
         for (Map.Entry<String,Object> param : data.entrySet()) {
@@ -80,7 +65,12 @@ public class AccountCreationTest {
         }
         byte[] postDataBytes = postData.toString().getBytes("UTF-8");
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-
+        conn.setInstanceFollowRedirects(true);
+        conn.setDoOutput(true);
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+        conn.setRequestProperty("form_key", UUID.randomUUID().toString());
 
         java.net.CookieManager msCookieManager = new java.net.CookieManager();
 
@@ -99,57 +89,58 @@ public class AccountCreationTest {
             }
         }
 
-        conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
-        conn.setRequestProperty("form_key", UUID.randomUUID().toString());
 
-        URLConnection connection = url.openConnection();
-        connection.setDoOutput(true);
+
+
 
         OutputStreamWriter out = new OutputStreamWriter(
-                connection.getOutputStream());
+                conn.getOutputStream());
         out.write(postData.toString().toCharArray());
         out.close();
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(
-                        connection.getInputStream()));
+                        conn.getInputStream()));
         String decodedString;
         while ((decodedString = in.readLine()) != null) {
             System.out.println(decodedString);
         }
         in.close();
-        /*post.setEntity(new UrlEncodedFormEntity(urlParameters));
+        *//*post.setEntity(new UrlEncodedFormEntity(urlParameters));
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
              CloseableHttpResponse response = httpClient.execute(post)) {
 
             System.out.println("RESPONSE====>" + EntityUtils.toString(response.getEntity()));
-        }*/
+        }*//*
     }
 
     @Test
     public void sendPost() throws Exception {
         final HttpClient httpClient = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_2)
+                .connectTimeout(Duration.ofSeconds(30))
+                .executor(Executors.newFixedThreadPool(2))
+                .priority(1) //HTTP/2 priority
+                .proxy(ProxySelector.getDefault())
+                .sslContext(SSLContext.getDefault())
+                .sslParameters(new SSLParameters())
                 .build();
 
         // form parameters
         Map<Object, Object> data = new HashMap<>();
         data.put("firstname", "firstname");
         data.put("lastname", "lastname");
-        data.put("email_address", "fir@last.com");
+        data.put("email", "fir222@last.com");
         data.put("password", "123456");
         data.put("confirmation", "123456");
+        data.put("is_subscribed", false);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(buildFormDataFromMap(data))
                 .uri(URI.create("http://107.23.133.112/customer/account/createpost/"))
                 //.setHeader("User-Agent", "Java 11 HttpClient Bot")
                 //.setHeader("form_key", "KElcBvo988EMspXI")// add request header
-                .header("Content-Type", "application/x-www-form-urlencoded")
+                .header("Content-Type", "multipart/form-data")
                 .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -182,7 +173,9 @@ public class AccountCreationTest {
         try{
              WebClient webClient = new WebClient();
 
-             HtmlPage htmlPage = webClient.getPage(AccountCreationConstants.SERVICE_URL);
+             //HtmlPage htmlPage = webClient.getPage(AccountCreationConstants.SERVICE_URL);
+
+            HtmlPage htmlPage = webClient.getPage( "http://localhost:8080/");
 
              HtmlForm form = htmlPage.getHtmlElementById("form-validate");
 
@@ -201,16 +194,17 @@ public class AccountCreationTest {
 
             firstName.setText("firstname");
             lastName.setText("lastname");
-            email.setText("fir@last.com");
+            email.setText("fir11@last.com");
             password.setText("123456");
             confirmPassword.setText("123456");
 
-
-            // Now submit the form by clicking the button and get back the second page.
-            form.setActionAttribute("http://107.23.133.112/customer/account/createpost/");
             form.click();
 
-           // page2.toString();
+
+            // Now submit the form by clicking the button and get back the second page.
+            //form.setActionAttribute("http://107.23.133.112/customer/account/createpost/");
+
+
 
         } catch (IOException ioEx) {
 
@@ -276,20 +270,226 @@ public class AccountCreationTest {
 
         URL url = new URL("http://107.23.133.112/customer/account/createpost/");
 
-        CloseableHttpClient client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://107.23.133.112/customer/account/createpost/?___store=default&amp;___from_store=default");
+        HttpClient httpClient = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.ALWAYS).build();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://107.23.133.112/customer/account/createpost/"))
+                .build();
+
+
+
+
+        HttpPost httpPost = new HttpPost("http://107.23.133.112/customer/account/createpost/");
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("firstname", "firstname"));
         params.add(new BasicNameValuePair("lastname", "lastname"));
             params.add(new BasicNameValuePair("email_address", "firtest@last.com"));
         params.add(new BasicNameValuePair("password", "123456"));
-        params.add(new BasicNameValuePair("confirmation", "12345"));
+        params.add(new BasicNameValuePair("confirmation", "123456"));
         httpPost.setEntity(new UrlEncodedFormEntity(params));
 
-        CloseableHttpResponse response = client.execute(httpPost);
-        assertThat(response.getStatusLine().getStatusCode(), equalTo(200));
-        client.close();
+        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        httpPost.setHeader("form_key", UUID.randomUUID().toString());
+
 
     }
+
+    @Test
+    public void redirect(){
+
+        try {
+
+            // form parameters
+            Map<String, Object> data = new HashMap<>();
+            data.put("firstname", "firstname");
+            data.put("lastname", "lastname");
+            data.put("email_address", "firtest11@last.com");
+            data.put("password", "123456");
+            data.put("confirmation", "123456");
+
+            StringBuilder postData = new StringBuilder();
+            for (Map.Entry<String,Object> param : data.entrySet()) {
+                if (postData.length() != 0) postData.append('&');
+                postData.append(URLEncoder.encode(param.getKey(), "UTF-8"));
+                postData.append('=');
+                postData.append(URLEncoder.encode(String.valueOf(param.getValue()), "UTF-8"));
+            }
+
+            String url = "http://107.23.133.112/customer/account/createpost/";
+
+            URL obj = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
+            conn.setReadTimeout(5000);
+            conn.setRequestMethod("POST");
+            conn.setDoOutput(true);
+            OutputStreamWriter out = new OutputStreamWriter(
+                    conn.getOutputStream());
+            out.write(postData.toString().toCharArray());
+            out.close();
+
+            System.out.println("Request URL ... " + url);
+
+            boolean redirect = false;
+
+            // normally, 3xx is redirect
+            int status = conn.getResponseCode();
+            if (status != HttpURLConnection.HTTP_OK) {
+                if (status == HttpURLConnection.HTTP_MOVED_TEMP
+                        || status == HttpURLConnection.HTTP_MOVED_PERM
+                        || status == HttpURLConnection.HTTP_SEE_OTHER)
+                    redirect = true;
+            }
+
+            System.out.println("Response Code ... " + status);
+
+            if (redirect) {
+
+                // get redirect url from "location" header field
+                String newUrl = conn.getHeaderField("Location");
+
+                // get the cookie if need, for login
+                String cookies = conn.getHeaderField("Set-Cookie");
+
+                // open the new connnection again
+                conn = (HttpURLConnection) new URL(newUrl).openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                OutputStreamWriter out1 = new OutputStreamWriter(
+                        conn.getOutputStream());
+                out1.write(postData.toString().toCharArray());
+                out1.close();
+                System.out.println("Redirect to URL : " + newUrl);
+
+            }
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuffer html = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                html.append(inputLine);
+            }
+            in.close();
+
+            System.out.println("URL Content... \n" + html.toString());
+            System.out.println("Done");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
+
+    @Test
+    public void httpRedirect() throws Exception{
+
+
+        HttpClient instance = createHttpClient(10000);
+
+
+        HttpPost httpPost = new HttpPost("http://107.23.133.112/customer/account/createpost/");
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("firstname", "firstname"));
+        params.add(new BasicNameValuePair("lastname", "lastname"));
+        params.add(new BasicNameValuePair("email", "firtestfir@last.com"));
+        params.add(new BasicNameValuePair("password", "123456"));
+        params.add(new BasicNameValuePair("confirmation", "123456"));
+        httpPost.setEntity(new UrlEncodedFormEntity(params, java.nio.charset.StandardCharsets.UTF_8));
+
+        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        httpPost.setHeader("form_key", UUID.randomUUID().toString());
+        //httpPost.setHeader("Location", "http://107.23.133.112/customer/account/index/");
+
+        HttpResponse response = instance.execute(httpPost);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        response.getEntity().writeTo(out);
+        String responseString = out.toString();
+        out.close();
+        System.out.println(responseString);
+
+
+    }
+
+    public static CloseableHttpClient createHttpClient(final int maxRedirects) throws Exception {
+         final BasicCookieStore cookieStore = new BasicCookieStore();
+        return HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy())
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).setMaxRedirects(maxRedirects).setRedirectsEnabled(true).build())
+                .setDefaultCookieStore(cookieStore)
+                .setRetryHandler(new StandardHttpRequestRetryHandler())
+                .build();
+    }
+
+   /* @Test
+    public  void postMethod() throws IOException {
+
+        DefaultHttpClient  httpclient = new DefaultHttpClient();
+        *//*httpclient.setRedirectStrategy(new DefaultRedirectStrategy() {
+            public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context)  {
+                boolean isRedirect=false;
+                try {
+                    isRedirect = super.isRedirected(request, response, context);
+                } catch (ProtocolException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                if (!isRedirect) {
+                    int responseCode = response.getStatusLine().getStatusCode();
+                    if (responseCode == 301 || responseCode == 302) {
+                        return true;
+                    }
+                }
+                return isRedirect;
+            }
+        });*//*
+        CookieStore cookieStore = new BasicCookieStore();
+        httpclient.getParams().setParameter(
+                ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
+        HttpContext context = new BasicHttpContext();
+        context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+        //ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+        HttpPost httpPost = new HttpPost("http://107.23.133.112/customer/account/createpost/");
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("firstname", "firstname"));
+        params.add(new BasicNameValuePair("lastname", "lastname"));
+        params.add(new BasicNameValuePair("email", "firtestfir@last.com"));
+        params.add(new BasicNameValuePair("password", "123456"));
+        params.add(new BasicNameValuePair("confirmation", "123456"));
+        httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+
+        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+        httpPost.setHeader("form_key", UUID.randomUUID().toString());
+        httpPost.setHeader("Location", "index.html");
+
+        HttpResponse response = httpclient.execute(httpPost, context);
+        System.out.println(response);
+
+        if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
+            throw new IOException(response.getStatusLine().toString());
+
+        HttpUriRequest currentReq = (HttpUriRequest) context.getAttribute(
+                ExecutionContext.HTTP_REQUEST);
+        HttpHost currentHost = (HttpHost)  context.getAttribute(
+                ExecutionContext.HTTP_TARGET_HOST);
+        String currentUrl = currentHost.toURI() + currentReq.getURI();
+        System.out.println(currentUrl);
+
+        HttpEntity entity = response.getEntity();
+        if (entity != null) {
+            long len = entity.getContentLength();
+            if (len != -1 && len < 2048) {
+                System.out.println(EntityUtils.toString(entity));
+            } else {
+                // Stream content out
+            }
+        }
+
+
+    }*/
+
+
+
 }

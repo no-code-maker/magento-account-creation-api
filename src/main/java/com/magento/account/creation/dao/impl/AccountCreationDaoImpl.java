@@ -1,22 +1,31 @@
 package com.magento.account.creation.dao.impl;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.magento.account.creation.constants.AccountCreationConstants;
 import com.magento.account.creation.dao.AccountCreationDao;
+import com.magento.account.creation.exception.AccountCreationRetryableException;
+import com.magento.account.creation.exception.AccountCreationSystemException;
+import com.magento.account.creation.model.error.ErrorResponse;
 import com.magento.account.creation.model.request.AccountCreationRequest;
 import com.magento.account.creation.model.response.AccountCreationResponse;
+import com.magento.account.creation.util.AccountCreationUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.http.impl.client.StandardHttpRequestRetryHandler;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.charset.MalformedInputException;
 
 
 /**
@@ -24,49 +33,93 @@ import java.nio.charset.MalformedInputException;
  * @description Implementation layer for magento account creation api.
  */
 @Service
+@Slf4j
 public class AccountCreationDaoImpl implements AccountCreationDao {
+
+    CloseableHttpClient httpClient;
 
     @Override
     public AccountCreationResponse createAccount(AccountCreationRequest accountCreationRequest) {
 
-        try{
-        final WebClient webClient = new WebClient();
+        String formKey = getAccountCreationSession(AccountCreationConstants.SERVICE_GET_URL);
 
-        final HtmlPage htmlPage = webClient.getPage(AccountCreationConstants.SERVICE_URL);
+        createAccountPost(AccountCreationConstants.SERVICE_POST_URL, formKey, accountCreationRequest);
 
-        final HtmlForm form = htmlPage.getHtmlElementById("form-validate");
+        return AccountCreationUtil.createAccountCreationResponseObject(accountCreationRequest);
+    }
 
-        HtmlTextArea firstName = htmlPage.getHtmlElementById("firstname");
+    private String getAccountCreationSession(String acctCreationGetURL) {
 
-        //final HtmlTextArea firstName = form.getTextAreaByName("firstname");
-        firstName.setText(accountCreationRequest.getFirstName());
+        int count = 0;
 
-        final HtmlTextInput middleName = form.getInputByName("middlename");
-        final HtmlTextInput lastName = form.getInputByName("lastname");
-        final HtmlTextInput email = form.getInputByName("email");
-        final HtmlTextInput password = form.getInputByName("password");
-        final HtmlTextInput confirmPassword = form.getInputByName("confirmation");
-        final HtmlCheckBoxInput selectedSubscription = form.getInputByName("is_subscribed");
-        final HtmlButton button = form.getButtonByName("Register");
+        String formKey = null;
 
-        firstName.setText(accountCreationRequest.getFirstName());
-        lastName.setText(accountCreationRequest.getLastName());
-        middleName.setText(accountCreationRequest.getMiddleName());
-        email.setText(accountCreationRequest.getEmailAddress());
-        password.setText(accountCreationRequest.getPassword());
-        confirmPassword.setText(accountCreationRequest.getConfirmPassword());
-        selectedSubscription.setChecked(accountCreationRequest.isSubscribed());
+        while (true) {
 
+            try (CloseableHttpResponse response = createHttpClient().execute(
+                    new HttpGet(acctCreationGetURL))) {
+                String responseString = new BasicResponseHandler().handleResponse(response);
 
-        // Now submit the form by clicking the button and get back the second page.
-        final HtmlPage page2 = button.click();
+                if (StringUtils.isNotBlank(responseString)) {
+                    formKey = AccountCreationUtil.findFormKey(responseString);
+                } else {
+                    new AccountCreationRetryableException();
+                }
+                return formKey;
+            } catch (AccountCreationRetryableException acrEx) {
+                if (++count == AccountCreationConstants.ACCT_CREATION_GET_MAX_RETRIES) throw acrEx;
+            } catch (Exception ex) {
+                throw new AccountCreationSystemException(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+                        AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION +
+                                ex.getCause()));
+            }
+        }
+    }
 
-        page2.toString();
+    private void createAccountPost(String url, String formKey,
+                                   AccountCreationRequest accountCreationRequest) {
+        try {
 
-        } catch (IOException ioEx) {
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setEntity(AccountCreationUtil.generateFormEntity(formKey, accountCreationRequest));
+
+            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    throw new AccountCreationSystemException(
+                            AccountCreationConstants.ERR_DOWNSTREAM_FAIL_MESSAGE);
+                }
+            } catch (Exception ex) {
+                throw new AccountCreationSystemException(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+                        AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION +
+                                ex.getCause()));
+            }
+
+        } finally {
+            try {
+                if (this.httpClient != null) {
+                    this.httpClient.close();
+                }
+            } catch (IOException ex) {
+                throw new AccountCreationSystemException(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+                        AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION +
+                                ex.getCause()));
+            }
 
         }
-
-        return null;
     }
+
+    public CloseableHttpClient createHttpClient() {
+
+        final BasicCookieStore cookieStore = new BasicCookieStore();
+        this.httpClient = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy())
+                .setConnectionManager(new PoolingHttpClientConnectionManager())
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).setMaxRedirects(100).build())
+                .setDefaultCookieStore(cookieStore)
+                .setRetryHandler(new StandardHttpRequestRetryHandler())
+                .build();
+
+        return this.httpClient;
+
+    }
+
 }

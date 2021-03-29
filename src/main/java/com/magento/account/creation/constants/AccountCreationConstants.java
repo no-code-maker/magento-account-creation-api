@@ -22,7 +22,11 @@ public class AccountCreationConstants {
 
     public static final String CORRELATION_ID = "correlation-id";
 
-    public static final String SERVICE_URL = "http://107.23.133.112/customer/account/create/";
+    public static final String SERVICE_GET_URL = "http://107.23.133.112/customer/account/create/";
+
+    public static final String SERVICE_POST_URL = "http://107.23.133.112/customer/account/createpost/";
+
+    public static final String SERVICE_PATH = "/magento/account/create";
 
     public static final int CONNECTION_TIMEOUT = 5000;
 
@@ -30,8 +34,31 @@ public class AccountCreationConstants {
 
     public static final int PASSWORD_MIN_FIELD_SIZE  = 6;
 
+    public static final int ACCT_CREATION_GET_MAX_RETRIES  = 2;
+
+    //Form Constants
+    public static final String FIELD_FORM_KEY = "form_key";
+
+    public static final String FIELD_SUCCESS_URL = "success_url";
+
+    public static final String FIELD_ERROR_URL = "error_url";
+
+    public static final String FIELD_FIRST_NAME = "firstname";
+
+    public static final String FIELD_MIDDLE_NAME = "middlename";
+
+    public static final String FIELD_LAST_NAME = "lastname";
+
+    public static final String FIELD_EMAIL = "email";
+
+    public static final String FIELD_PASSWORD = "password";
+
+    public static final String FIELD_CONFIRM_PASSWORD = "confirmation";
+
     //Error Handling
     public static final String ERR_CODE_VALIDATION = "Request Validation Failed: ";
+
+    public static final String ERR_CODE_SYSTEM_EXCEPTION = "System Error: ";
 
     public static final String ERR_FIELD_LENGTH_HIGH = " field length is greater than defined value: " + STRING_FIELD_SIZE;
 
@@ -42,4 +69,6 @@ public class AccountCreationConstants {
     public static final String FIELD_VALUE_NULL = " mandatory field value is found NULL or empty ";
 
     public static final String PASSWORD_MATCH = " does not match";
+
+    public static final String ERR_DOWNSTREAM_FAIL_MESSAGE = "Failed to completed registration due to downstream system failure.";
 }

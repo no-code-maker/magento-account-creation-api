@@ -22,7 +22,7 @@ public class ServiceHealthIndicator implements HealthIndicator, HealthContributo
     public Health health() {
         try {
 
-            URL urlServer = new URL(AccountCreationConstants.SERVICE_URL);
+            URL urlServer = new URL(AccountCreationConstants.SERVICE_GET_URL);
             HttpURLConnection urlConn = (HttpURLConnection) urlServer.openConnection();
             urlConn.setConnectTimeout(AccountCreationConstants.CONNECTION_TIMEOUT);
             urlConn.connect();
@@ -31,7 +31,7 @@ public class ServiceHealthIndicator implements HealthIndicator, HealthContributo
                 throw new Exception("Failed to connect to Magento Service");
             }
         } catch (Exception exception) {
-            log.warn("Failed to connect to : {}",AccountCreationConstants.SERVICE_URL);
+            log.warn("Failed to connect to : {}",AccountCreationConstants.SERVICE_GET_URL);
             return Health.down().build();
         }
         return Health.up().build();

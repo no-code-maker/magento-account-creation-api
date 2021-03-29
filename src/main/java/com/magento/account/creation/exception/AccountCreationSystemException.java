@@ -15,6 +15,12 @@ public class AccountCreationSystemException extends RuntimeException implements 
 
     private ErrorResponse errorResponse;
 
+    private String errorMessage;
+
+    public AccountCreationSystemException(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
     public AccountCreationSystemException(ErrorResponse errorResponse) {
         this.errorResponse = errorResponse;
     }

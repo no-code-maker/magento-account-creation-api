@@ -2,6 +2,7 @@ package com.magento.account.creation.model.error;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import com.magento.account.creation.constants.AccountCreationConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,5 +38,6 @@ public class ErrorResponse implements Serializable {
         this.status = status.value();
         this.error = status.getReasonPhrase();
         this.message = errorDescription;
+        this.path = AccountCreationConstants.SERVICE_PATH;
     }
 }

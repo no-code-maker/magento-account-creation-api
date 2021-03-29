@@ -25,7 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin
 @RestController
 public class AccountCreationResource {
 
@@ -48,8 +48,13 @@ public class AccountCreationResource {
 
         AccountCreationErrorResponse accountCreationErrorResponse = null;
 
+        AccountCreationResponse accountCreationResponse = null;
+
+        AccountCreationAbstractResponse accountCreationAbstractResponse = null;
+
         try {
-            this.accountCreationService.createAccount(accountCreationRequest);
+            accountCreationResponse = this.accountCreationService.createAccount(accountCreationRequest);
+
         } catch (RequestValidationException ex) {
             if (ex.getErrorResponse() != null) {
                 response.setStatus(ex.getErrorResponse().getStatus());
@@ -61,13 +66,22 @@ public class AccountCreationResource {
             }
 
         } catch (AccountCreationSystemException ex) {
-
-
-
+            if (ex.getErrorResponse() != null) {
+                response.setStatus(ex.getErrorResponse().getStatus());
+                accountCreationErrorResponse = new AccountCreationErrorResponse(ex.getErrorResponse());
+                accountCreationErrorResponse.setStatusDescription("Failed to create account");
+            } else {
+                accountCreationErrorResponse = new AccountCreationErrorResponse(
+                        AccountCreationUtil.getEmptySystemValidationResponse());
+            }
 
         } finally {
-
+            if (accountCreationErrorResponse != null){
+                accountCreationAbstractResponse = accountCreationErrorResponse;
+            } else {
+                accountCreationAbstractResponse = accountCreationResponse;
+            }
         }
-        return accountCreationErrorResponse;
+        return accountCreationAbstractResponse;
     }
 }
