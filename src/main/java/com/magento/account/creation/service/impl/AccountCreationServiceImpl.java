@@ -25,10 +25,9 @@ public class AccountCreationServiceImpl implements AccountCreationService {
     @Override
     public AccountCreationResponse createAccount(AccountCreationRequest accountCreationRequest) {
 
-        this.accountCreationValidationService.validate(accountCreationRequest);
+        AccountCreationRequest accountCreationValidatedRequest = this.accountCreationValidationService.validate(accountCreationRequest);
 
-        AccountCreationResponse accountCreationResponse = this.accountCreationDao.createAccount(accountCreationRequest);
+        return this.accountCreationDao.createAccount(accountCreationValidatedRequest);
 
-        return accountCreationResponse;
     }
 }

@@ -14,14 +14,28 @@ import org.springframework.stereotype.Service;
 public class AccountCreationValidationServiceImpl implements AccountCreationValidationService {
 
     @Override
-    public void validate(AccountCreationRequest accountCreationRequest) {
+    public AccountCreationRequest validate(AccountCreationRequest accountCreationRequest) {
 
-            validateMandatoryNameField(accountCreationRequest.getFirstName(), AccountCreationConstants.FIRST_NAME);
-            validateMandatoryNameField(accountCreationRequest.getLastName(), AccountCreationConstants.LAST_NAME);
-            validateNonMandatoryNameField(accountCreationRequest.getMiddleName(), AccountCreationConstants.MIDDLE_NAME);
-            validateEmail(accountCreationRequest.getEmailAddress(), AccountCreationConstants.EMAIL);
-            validatePasswords(accountCreationRequest.getPassword(), accountCreationRequest.getConfirmPassword(),
-                    AccountCreationConstants.PASSWORD);
+            if(accountCreationRequest != null) {
+                validateMandatoryNameField(accountCreationRequest.getFirstName(), AccountCreationConstants.FIRST_NAME);
+                validateMandatoryNameField(accountCreationRequest.getLastName(), AccountCreationConstants.LAST_NAME);
+
+                if (accountCreationRequest.getMiddleName() != null) {
+                    validateNonMandatoryNameField(accountCreationRequest.getMiddleName(), AccountCreationConstants.MIDDLE_NAME);
+                } else {
+                    accountCreationRequest.setMiddleName(StringUtils.EMPTY);
+                }
+
+                validateEmail(accountCreationRequest.getEmailAddress(), AccountCreationConstants.EMAIL);
+                validatePasswords(accountCreationRequest.getPassword(), accountCreationRequest.getConfirmPassword(),
+                        AccountCreationConstants.PASSWORD);
+            } else {
+               throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
+                        AccountCreationConstants.ERR_CODE_VALIDATION +
+                                AccountCreationConstants.REQUEST_OBJECT_VALUE_NULL));
+            }
+
+            return accountCreationRequest;
     }
 
     private void validateMandatoryNameField(String nameValue, String fieldName){
@@ -59,6 +73,8 @@ public class AccountCreationValidationServiceImpl implements AccountCreationVali
                         AccountCreationConstants.ERR_CODE_VALIDATION +
                         fieldName + AccountCreationConstants.FIELD_REGEX + nameValue));
             }
+        } else {
+
         }
     }
 

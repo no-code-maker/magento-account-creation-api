@@ -56,6 +56,10 @@ public class AccountCreationConstants {
     public static final String FIELD_CONFIRM_PASSWORD = "confirmation";
 
     //Error Handling
+    public static final String REQUEST_SUCCESS = "Successfully created account";
+
+    public static final String REQUEST_FAILED = "Failed to create account";
+
     public static final String ERR_CODE_VALIDATION = "Request Validation Failed: ";
 
     public static final String ERR_CODE_SYSTEM_EXCEPTION = "System Error: ";
@@ -67,6 +71,8 @@ public class AccountCreationConstants {
     public static final String FIELD_REGEX = " field not matching valid pattern. Input provided: ";
 
     public static final String FIELD_VALUE_NULL = " mandatory field value is found NULL or empty ";
+
+    public static final String REQUEST_OBJECT_VALUE_NULL = " request object is found NULL or empty ";
 
     public static final String PASSWORD_MATCH = " does not match";
 

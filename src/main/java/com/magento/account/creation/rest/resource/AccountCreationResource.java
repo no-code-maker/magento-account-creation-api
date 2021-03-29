@@ -10,6 +10,8 @@ import com.magento.account.creation.model.response.AccountCreationResponse;
 import com.magento.account.creation.service.AccountCreationService;
 import com.magento.account.creation.util.AccountCreationUtil;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 
 @CrossOrigin
 @RestController
+@Slf4j
 public class AccountCreationResource {
 
     private final AccountCreationService accountCreationService;
@@ -50,26 +53,28 @@ public class AccountCreationResource {
 
         AccountCreationResponse accountCreationResponse = null;
 
-        AccountCreationAbstractResponse accountCreationAbstractResponse = null;
+        AccountCreationAbstractResponse accountCreationAbstractResponse;
 
         try {
+            log.info(accountCreationRequest.toString());
             accountCreationResponse = this.accountCreationService.createAccount(accountCreationRequest);
 
         } catch (RequestValidationException ex) {
+            response.setStatus(ex.getErrorResponse().getStatus());
+
             if (ex.getErrorResponse() != null) {
-                response.setStatus(ex.getErrorResponse().getStatus());
                 accountCreationErrorResponse = new AccountCreationErrorResponse(ex.getErrorResponse());
-                accountCreationErrorResponse.setStatusDescription("Failed to create account");
+                accountCreationErrorResponse.setStatusDescription(AccountCreationConstants.REQUEST_FAILED);
             } else {
                 accountCreationErrorResponse = new AccountCreationErrorResponse(
                         AccountCreationUtil.getEmptyValidationResponse());
             }
 
         } catch (AccountCreationSystemException ex) {
+            response.setStatus(ex.getErrorResponse().getStatus());
             if (ex.getErrorResponse() != null) {
-                response.setStatus(ex.getErrorResponse().getStatus());
                 accountCreationErrorResponse = new AccountCreationErrorResponse(ex.getErrorResponse());
-                accountCreationErrorResponse.setStatusDescription("Failed to create account");
+                accountCreationErrorResponse.setStatusDescription(AccountCreationConstants.REQUEST_FAILED);
             } else {
                 accountCreationErrorResponse = new AccountCreationErrorResponse(
                         AccountCreationUtil.getEmptySystemValidationResponse());
@@ -79,9 +84,12 @@ public class AccountCreationResource {
             if (accountCreationErrorResponse != null){
                 accountCreationAbstractResponse = accountCreationErrorResponse;
             } else {
+                response.setStatus(HttpStatus.SC_OK);
                 accountCreationAbstractResponse = accountCreationResponse;
+                accountCreationAbstractResponse.setStatusDescription(AccountCreationConstants.REQUEST_SUCCESS);
             }
         }
+        log.info("{}", accountCreationAbstractResponse);
         return accountCreationAbstractResponse;
     }
 }

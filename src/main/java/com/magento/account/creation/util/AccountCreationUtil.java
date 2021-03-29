@@ -59,9 +59,11 @@ public class AccountCreationUtil {
 
         Account account  = Account.builder().firstName(accountCreationRequest.getFirstName())
                 .middleName(accountCreationRequest.getMiddleName())
-                .lastName(accountCreationRequest.getMiddleName())
-                .emailAddress(accountCreationRequest.getEmailAddress()).build();
+                .lastName(accountCreationRequest.getLastName())
+                .emailAddress(accountCreationRequest.getEmailAddress())
+                .subscribed(accountCreationRequest.isSubscribed()).build();
 
         return new AccountCreationResponse(account);
     }
+
 }

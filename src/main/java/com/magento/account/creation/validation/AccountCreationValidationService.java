@@ -8,5 +8,5 @@ import com.magento.account.creation.model.request.AccountCreationRequest;
  */
 public interface AccountCreationValidationService {
 
-    void validate(AccountCreationRequest accountCreationRequest);
+    AccountCreationRequest validate(AccountCreationRequest accountCreationRequest);
 }

@@ -33,6 +33,17 @@ public class ErrorResponse implements Serializable {
 
     private String path;
 
+    @Override
+    public String toString() {
+        return "ErrorResponse{" +
+                "status=" + status +
+                ", error='" + error + '\'' +
+                ", timestamp=" + timestamp +
+                ", message='" + message + '\'' +
+                ", path='" + path + '\'' +
+                '}';
+    }
+
     public ErrorResponse(HttpStatus status, String errorDescription){
         this.timestamp = LocalDateTime.now();
         this.status = status.value();

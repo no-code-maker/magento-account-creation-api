@@ -20,4 +20,6 @@ public class Account implements Serializable {
     String lastName;
 
     String emailAddress;
+
+    boolean subscribed;
 }

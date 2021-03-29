@@ -1,5 +1,6 @@
 package com.magento.account.creation.model.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /**
@@ -23,4 +24,15 @@ public class AccountCreationRequest {
 
     boolean subscribed;
 
+    @Override
+    public String toString() {
+        return "AccountCreationRequest{" +
+                "firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", subscribed=" + subscribed +
+                '}';
+    }
 }
+
