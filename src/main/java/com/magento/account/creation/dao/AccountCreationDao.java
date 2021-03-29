@@ -9,5 +9,7 @@ import com.magento.account.creation.model.response.AccountCreationResponse;
  */
 public interface AccountCreationDao {
 
-    AccountCreationResponse createAccount(AccountCreationRequest accountCreationRequest);
+    String getAccountCreationSessionFormKey();
+
+    void createAccountPost(String formKey, AccountCreationRequest accountCreationRequest);
 }

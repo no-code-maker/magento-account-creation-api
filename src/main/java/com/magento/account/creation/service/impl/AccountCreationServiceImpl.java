@@ -4,6 +4,7 @@ import com.magento.account.creation.dao.AccountCreationDao;
 import com.magento.account.creation.model.request.AccountCreationRequest;
 import com.magento.account.creation.model.response.AccountCreationResponse;
 import com.magento.account.creation.service.AccountCreationService;
+import com.magento.account.creation.util.AccountCreationUtil;
 import com.magento.account.creation.validation.AccountCreationValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,11 @@ public class AccountCreationServiceImpl implements AccountCreationService {
 
         AccountCreationRequest accountCreationValidatedRequest = this.accountCreationValidationService.validate(accountCreationRequest);
 
-        return this.accountCreationDao.createAccount(accountCreationValidatedRequest);
+        String formKey = this.accountCreationDao.getAccountCreationSessionFormKey();
+
+        this.accountCreationDao.createAccountPost(formKey, accountCreationValidatedRequest);
+
+        return AccountCreationUtil.createAccountCreationResponseObject(accountCreationRequest);
 
     }
 }

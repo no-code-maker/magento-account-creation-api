@@ -22,6 +22,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.client.StandardHttpRequestRetryHandler;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -38,36 +39,37 @@ public class AccountCreationDaoImpl implements AccountCreationDao {
 
     CloseableHttpClient httpClient;
 
-    @Override
-    public AccountCreationResponse createAccount(AccountCreationRequest accountCreationRequest) {
+    @Value ("${SERVICE_GET_URL}")
+    private String serviceGetUrl;
 
-        String formKey = getAccountCreationSession(AccountCreationConstants.SERVICE_GET_URL);
+    @Value ("${SERVICE_POST_URL}")
+    private String getServicePostUrl;
 
-        createAccountPost(AccountCreationConstants.SERVICE_POST_URL, formKey, accountCreationRequest);
 
-        return AccountCreationUtil.createAccountCreationResponseObject(accountCreationRequest);
-    }
-
-    private String getAccountCreationSession(String acctCreationGetURL) {
+    public String getAccountCreationSessionFormKey() {
 
         int count = 0;
 
-        String formKey = null;
+        String formKey;
 
         while (true) {
 
             try (CloseableHttpResponse response = createHttpClient().execute(
-                    new HttpGet(acctCreationGetURL))) {
+                    new HttpGet(this.serviceGetUrl))) {
                 String responseString = new BasicResponseHandler().handleResponse(response);
 
                 if (StringUtils.isNotBlank(responseString)) {
                     formKey = AccountCreationUtil.findFormKey(responseString);
                 } else {
-                    new AccountCreationRetryableException();
+                    throw new AccountCreationRetryableException();
                 }
                 return formKey;
             } catch (AccountCreationRetryableException acrEx) {
-                if (++count == AccountCreationConstants.ACCT_CREATION_GET_MAX_RETRIES) throw acrEx;
+                if (++count == AccountCreationConstants.ACCT_CREATION_GET_MAX_RETRIES){
+                    throw new AccountCreationRetryableException( new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+                            AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION +
+                                    acrEx.getCause()));
+                }
             } catch (Exception ex) {
                 throw new AccountCreationSystemException(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
                         AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION +
@@ -76,11 +78,11 @@ public class AccountCreationDaoImpl implements AccountCreationDao {
         }
     }
 
-    private void createAccountPost(String url, String formKey,
+    public void createAccountPost(String formKey,
                                    AccountCreationRequest accountCreationRequest) {
         try {
 
-            HttpPost httpPost = new HttpPost(url);
+            HttpPost httpPost = new HttpPost(this.getServicePostUrl);
             httpPost.setEntity(AccountCreationUtil.generateFormEntity(formKey, accountCreationRequest));
 
             try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
@@ -108,7 +110,7 @@ public class AccountCreationDaoImpl implements AccountCreationDao {
         }
     }
 
-    public CloseableHttpClient createHttpClient() {
+    private CloseableHttpClient createHttpClient() {
 
         final BasicCookieStore cookieStore = new BasicCookieStore();
         this.httpClient = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy())
