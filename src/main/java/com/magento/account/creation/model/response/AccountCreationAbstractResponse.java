@@ -1,8 +1,6 @@
 package com.magento.account.creation.model.response;
 
 import lombok.Data;
-
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -12,7 +10,6 @@ import java.io.Serializable;
 @Data
 public class AccountCreationAbstractResponse<T extends Serializable> implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 8260390572730361655L;
 
     private String statusDescription;

@@ -1,7 +1,8 @@
 package com.magento.account.creation.dao;
 
 import com.magento.account.creation.model.request.AccountCreationRequest;
-import com.magento.account.creation.model.response.AccountCreationResponse;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * @author Rajeev Krishna
@@ -9,7 +10,7 @@ import com.magento.account.creation.model.response.AccountCreationResponse;
  */
 public interface AccountCreationDao {
 
-    String getAccountCreationSessionFormKey();
+    String getAccountCreationSessionFormKey(CloseableHttpClient closeableHttpClient, BasicResponseHandler basicResponseHandler);
 
-    void createAccountPost(String formKey, AccountCreationRequest accountCreationRequest);
+    void createAccountPost(CloseableHttpClient closeableHttpClient, String formKey, AccountCreationRequest accountCreationRequest);
 }

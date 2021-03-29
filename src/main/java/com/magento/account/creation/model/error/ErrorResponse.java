@@ -3,15 +3,11 @@ package com.magento.account.creation.model.error;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.magento.account.creation.constants.AccountCreationConstants;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Generated;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -19,7 +15,6 @@ import java.time.LocalDateTime;
 @Getter
 public class ErrorResponse implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = -3603081557950085827L;
 
     private int status;

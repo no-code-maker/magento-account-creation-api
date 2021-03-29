@@ -6,6 +6,15 @@ import com.magento.account.creation.model.response.AccountCreationResponse;
 import com.magento.account.creation.service.AccountCreationService;
 import com.magento.account.creation.util.AccountCreationUtil;
 import com.magento.account.creation.validation.AccountCreationValidationService;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.http.impl.client.StandardHttpRequestRetryHandler;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +37,28 @@ public class AccountCreationServiceImpl implements AccountCreationService {
 
         AccountCreationRequest accountCreationValidatedRequest = this.accountCreationValidationService.validate(accountCreationRequest);
 
-        String formKey = this.accountCreationDao.getAccountCreationSessionFormKey();
+        CloseableHttpClient closeableHttpClient = createHttpClient();
 
-        this.accountCreationDao.createAccountPost(formKey, accountCreationValidatedRequest);
+        String formKey = this.accountCreationDao.getAccountCreationSessionFormKey(closeableHttpClient,
+                new BasicResponseHandler());
+
+        this.accountCreationDao.createAccountPost(closeableHttpClient, formKey, accountCreationValidatedRequest);
 
         return AccountCreationUtil.createAccountCreationResponseObject(accountCreationRequest);
+
+    }
+
+    private CloseableHttpClient createHttpClient() {
+
+        final BasicCookieStore cookieStore = new BasicCookieStore();
+        CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy())
+                .setConnectionManager(new PoolingHttpClientConnectionManager())
+                .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).setMaxRedirects(100).build())
+                .setDefaultCookieStore(cookieStore)
+                .setRetryHandler(new StandardHttpRequestRetryHandler())
+                .build();
+
+        return closeableHttpClient;
 
     }
 }
