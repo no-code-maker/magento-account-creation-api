@@ -1,0 +1,39 @@
+swagger: "2.0"
+info:
+  title: Magento Account Creation
+  description: The API provides an interface to create user account for customers in Megento Madison Island UI application.
+  version: "1.0"
+  contact:
+    name: Rajeev Krishna
+    email: itsrajeevkrishna@gmail.com
+
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+
+tags:
+  - name: magento
+  - name: spring-boot
+
+paths:
+  '/magento/account/create'
+
+  post:
+    summary: Create Account
+    description: Creates user account in magento madission island UI application.
+    parameters:
+      - name: correlation-id
+        in: header
+        description: ID needed for tracking request within microservicee application.
+        required: false
+        type: String
+      - name: body
+        in: body
+        required: true
+        schema: '#/definition/AccountCreationRequest'
+
+    responses:
+      200:

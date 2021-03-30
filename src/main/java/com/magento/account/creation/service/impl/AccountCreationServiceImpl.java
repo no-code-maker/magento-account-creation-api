@@ -47,7 +47,7 @@ public class AccountCreationServiceImpl implements AccountCreationService {
 
     private CloseableHttpClient createHttpClient() {
         final BasicCookieStore cookieStore = new BasicCookieStore();
-        return HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy())
+        return HttpClientBuilder.create()/*.setRedirectStrategy(new LaxRedirectStrategy())*/
                 .setConnectionManager(new PoolingHttpClientConnectionManager())
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).setMaxRedirects(100).build())
                 .setDefaultCookieStore(cookieStore)

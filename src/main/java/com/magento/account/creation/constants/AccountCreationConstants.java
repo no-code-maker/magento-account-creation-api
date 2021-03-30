@@ -54,6 +54,10 @@ public class AccountCreationConstants {
 
     public static final String ERR_CODE_VALIDATION = "Request Validation Failed: ";
 
+    public static final String ACCOUNT_ALREADY_EXISTS = "Account Already Exists";
+
+    public static final String ERR_CODE_ACCOUNT_ALREADY_EXISTS = "Request Failed";
+
     public static final String ERR_CODE_SYSTEM_EXCEPTION = "System Error: ";
 
     public static final String ERR_FIELD_LENGTH_HIGH = " field length is greater than defined value: " + STRING_FIELD_SIZE;

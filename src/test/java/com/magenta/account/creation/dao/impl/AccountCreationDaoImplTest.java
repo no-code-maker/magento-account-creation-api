@@ -4,9 +4,11 @@ import com.magento.account.creation.dao.AccountCreationDao;
 import com.magento.account.creation.dao.impl.AccountCreationDaoImpl;
 import com.magento.account.creation.exception.AccountCreationRetryableException;
 import com.magento.account.creation.exception.AccountCreationSystemException;
+import com.magento.account.creation.exception.RequestValidationException;
 import com.magento.account.creation.model.request.AccountCreationRequest;
 import com.magento.account.creation.model.response.AccountCreationResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.Header;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -26,6 +28,7 @@ import org.mockito.Mockito;
 import org.mockito.internal.util.reflection.FieldSetter;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -110,9 +113,13 @@ public class AccountCreationDaoImplTest {
         log.info(">> testCreateAccountPost_Successful()");
 
         String servicePostUrl = "http://107.23.133.112/customer/account/createpost/";
+        String serviceIndexUrl = "http://107.23.133.112/customer/account/index/";
 
+        Header header = mock(Header.class);
         FieldSetter.setField(accountCreationDao,
                 AccountCreationDaoImpl.class.getDeclaredField("servicePostUrl"), servicePostUrl);
+        FieldSetter.setField(accountCreationDao,
+                AccountCreationDaoImpl.class.getDeclaredField("serviceIndexUrl"), serviceIndexUrl);
 
         AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
         accountCreationRequest.setFirstName("Tom");
@@ -125,7 +132,9 @@ public class AccountCreationDaoImplTest {
 
         when(closeableHttpClient.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponse);
         when(closeableHttpResponse.getStatusLine()).thenReturn(statusLine);
-        when(statusLine.getStatusCode()).thenReturn(200);
+        when(statusLine.getStatusCode()).thenReturn(302);
+        when(closeableHttpResponse.getFirstHeader("Location")).thenReturn(header);
+        when(header.getValue()).thenReturn(serviceIndexUrl);
 
         AccountCreationResponse accountCreationResponse = accountCreationDao
                 .createAccountPost(closeableHttpClient, "9999999", accountCreationRequest);
@@ -135,6 +144,41 @@ public class AccountCreationDaoImplTest {
         Assert.assertEquals(accountCreationResponse.getAccount().getLastName(), accountCreationRequest.getLastName());
         Assert.assertEquals(accountCreationResponse.getAccount().getEmailAddress(), accountCreationRequest.getEmailAddress());
         Assert.assertEquals(accountCreationResponse.getAccount().isSubscribed(), accountCreationRequest.isSubscribed());
+
+        log.info("<< testCreateAccountPost_Successful()");
+    }
+
+    @Test
+    public void testCreateAccountPost_DuplicateRequest() throws Exception {
+        log.info(">> testCreateAccountPost_Successful()");
+
+        String servicePostUrl = "http://107.23.133.112/customer/account/createpost/";
+        String serviceIndexUrl = "http://107.23.133.112/customer/account/index/";
+
+        Header header = mock(Header.class);
+        FieldSetter.setField(accountCreationDao,
+                AccountCreationDaoImpl.class.getDeclaredField("servicePostUrl"), servicePostUrl);
+        FieldSetter.setField(accountCreationDao,
+                AccountCreationDaoImpl.class.getDeclaredField("serviceIndexUrl"), serviceIndexUrl);
+
+        AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
+        accountCreationRequest.setFirstName("Tom");
+        accountCreationRequest.setMiddleName("C");
+        accountCreationRequest.setLastName("Lord");
+        accountCreationRequest.setEmailAddress("tom.lord@tomlord.com");
+        accountCreationRequest.setPassword("123456");
+        accountCreationRequest.setConfirmPassword("123456");
+        accountCreationRequest.setSubscribed(true);
+
+        expectedException.expect(RequestValidationException.class);
+
+        when(closeableHttpClient.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponse);
+        when(closeableHttpResponse.getStatusLine()).thenReturn(statusLine);
+        when(statusLine.getStatusCode()).thenReturn(302);
+        when(closeableHttpResponse.getFirstHeader("Location")).thenReturn(header);
+        when(header.getValue()).thenReturn(servicePostUrl);
+
+        accountCreationDao.createAccountPost(closeableHttpClient, "9999999", accountCreationRequest);
 
         log.info("<< testCreateAccountPost_Successful()");
     }

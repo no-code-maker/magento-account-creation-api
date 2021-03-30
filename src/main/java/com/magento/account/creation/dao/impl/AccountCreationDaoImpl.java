@@ -4,6 +4,7 @@ import com.magento.account.creation.constants.AccountCreationConstants;
 import com.magento.account.creation.dao.AccountCreationDao;
 import com.magento.account.creation.exception.AccountCreationRetryableException;
 import com.magento.account.creation.exception.AccountCreationSystemException;
+import com.magento.account.creation.exception.RequestValidationException;
 import com.magento.account.creation.model.error.ErrorResponse;
 import com.magento.account.creation.model.request.AccountCreationRequest;
 import com.magento.account.creation.model.response.AccountCreationResponse;
@@ -32,6 +33,9 @@ public class AccountCreationDaoImpl implements AccountCreationDao {
 
     @Value("${SERVICE_POST_URL}")
     private String servicePostUrl;
+
+    @Value("${SERVICE_INDEX_URL}")
+    private String serviceIndexUrl;
 
     public String getAccountCreationSessionFormKey(CloseableHttpClient closeableHttpClient,
                                                    BasicResponseHandler basicResponseHandler) {
@@ -70,10 +74,18 @@ public class AccountCreationDaoImpl implements AccountCreationDao {
             httpPost.setEntity(AccountCreationUtil.generateFormEntity(formKey, accountCreationRequest));
 
             try (CloseableHttpResponse response = closeableHttpClient.execute(httpPost)) {
-                if (response.getStatusLine().getStatusCode() != 200) {
-                    throw new AccountCreationSystemException(
-                            AccountCreationConstants.ERR_DOWNSTREAM_FAIL_MESSAGE);
+                if (response.getStatusLine().getStatusCode() == 302) {
+                    String location = response.getFirstHeader("Location").getValue();
+                    if(!location.equals(serviceIndexUrl)){
+                    throw new RequestValidationException(new ErrorResponse(HttpStatus.CONFLICT,
+                            AccountCreationConstants.ACCOUNT_ALREADY_EXISTS));
+                    }
+                } else {
+                    throw new AccountCreationSystemException(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+                            AccountCreationConstants.ERR_DOWNSTREAM_FAIL_MESSAGE));
                 }
+            } catch (RequestValidationException ex) {
+                throw new RequestValidationException(ex.getErrorResponse());
             } catch (Exception ex) {
                 throw new AccountCreationSystemException(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
                         AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION + ex.getCause()));
