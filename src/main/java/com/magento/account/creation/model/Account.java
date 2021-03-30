@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Builder
 public class Account implements Serializable {
 
+    private static final long serialVersionUID = 7988050941548732134L;
     String firstName;
 
     String middleName;

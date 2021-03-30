@@ -101,7 +101,8 @@ public class AccountCreationResourceTest {
         HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 
         AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
-        when(accountCreationService.createAccount(accountCreationRequest)).thenThrow(new RequestValidationException());
+        when(accountCreationService.createAccount(accountCreationRequest)).thenThrow(new RequestValidationException(
+                AccountCreationConstants.ERR_CODE_VALIDATION));
 
         AccountCreationAbstractResponse accountCreationAbstractResponse =
                 accountCreationResource.createAccount("9999999999", accountCreationRequest, httpServletResponse);

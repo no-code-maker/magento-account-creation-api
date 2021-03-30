@@ -22,11 +22,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 @Slf4j
 public class AccountCreationValidationServiceImplTest {
 
-    @InjectMocks
-    private AccountCreationValidationServiceImpl accountCreationValidationService;
-
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+    @InjectMocks
+    private AccountCreationValidationServiceImpl accountCreationValidationService;
 
     @Before
     public void setup() {
@@ -77,7 +76,7 @@ public class AccountCreationValidationServiceImplTest {
         AccountCreationRequest validateRequest = accountCreationValidationService.validate(accountCreationRequest);
 
         Assert.assertEquals(validateRequest.getFirstName(), accountCreationRequest.getFirstName());
-        Assert.assertEquals(validateRequest.getMiddleName(), "");
+        Assert.assertEquals("", validateRequest.getMiddleName());
         Assert.assertEquals(validateRequest.getLastName(), accountCreationRequest.getLastName());
         Assert.assertEquals(validateRequest.getEmailAddress(), accountCreationRequest.getEmailAddress());
         Assert.assertEquals(validateRequest.getPassword(), accountCreationRequest.getPassword());
@@ -85,6 +84,14 @@ public class AccountCreationValidationServiceImplTest {
         Assert.assertEquals(validateRequest.isSubscribed(), accountCreationRequest.isSubscribed());
 
         log.info("<< testValidateMissingMiddleName_Successful()");
+    }
+
+    @Test
+    public void testValidationFailed_AccountCreationObjectNull() {
+        log.info(">> testValidationFailed_AccountCreationObjectNull()");
+
+        expectedException.expect(RequestValidationException.class);
+        accountCreationValidationService.validate(null);
     }
 
     @Test
@@ -104,12 +111,60 @@ public class AccountCreationValidationServiceImplTest {
     }
 
     @Test
+    public void testValidationFailed_InvalidFirstNameField() {
+        log.info(">> testValidationFailed_FirstNameFieldNull()");
+        AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
+        accountCreationRequest.setFirstName("Tom1");
+        accountCreationRequest.setMiddleName(null);
+        accountCreationRequest.setLastName("Lord");
+        accountCreationRequest.setEmailAddress("tom.lord@tomlord.com");
+        accountCreationRequest.setPassword("123456");
+        accountCreationRequest.setConfirmPassword("123456");
+        accountCreationRequest.setSubscribed(true);
+
+        expectedException.expect(RequestValidationException.class);
+        accountCreationValidationService.validate(accountCreationRequest);
+    }
+
+    @Test
     public void testValidationFailed_LastNameFieldNull() {
         log.info(">> testValidationFailed_LastNameFieldNull()");
         AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
         accountCreationRequest.setFirstName("Tom");
         accountCreationRequest.setMiddleName(null);
         accountCreationRequest.setLastName(null);
+        accountCreationRequest.setEmailAddress("tom.lord@tomlord.com");
+        accountCreationRequest.setPassword("123456");
+        accountCreationRequest.setConfirmPassword("123456");
+        accountCreationRequest.setSubscribed(true);
+
+        expectedException.expect(RequestValidationException.class);
+        accountCreationValidationService.validate(accountCreationRequest);
+    }
+
+    @Test
+    public void testValidationFailed_InvalidLastNameField() {
+        log.info(">> testValidationFailed_InvalidLastNameField()");
+        AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
+        accountCreationRequest.setFirstName("Tom");
+        accountCreationRequest.setMiddleName(null);
+        accountCreationRequest.setLastName("Lord1");
+        accountCreationRequest.setEmailAddress("tom.lord@tomlord.com");
+        accountCreationRequest.setPassword("123456");
+        accountCreationRequest.setConfirmPassword("123456");
+        accountCreationRequest.setSubscribed(true);
+
+        expectedException.expect(RequestValidationException.class);
+        accountCreationValidationService.validate(accountCreationRequest);
+    }
+
+    @Test
+    public void testValidationFailed_InvalidMiddleNameField() {
+        log.info(">> testValidationFailed_InvalidMiddleNameField()");
+        AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
+        accountCreationRequest.setFirstName("Tom");
+        accountCreationRequest.setMiddleName("S2");
+        accountCreationRequest.setLastName("Lord");
         accountCreationRequest.setEmailAddress("tom.lord@tomlord.com");
         accountCreationRequest.setPassword("123456");
         accountCreationRequest.setConfirmPassword("123456");
@@ -294,6 +349,23 @@ public class AccountCreationValidationServiceImplTest {
         accountCreationRequest.setPassword("123456");
         accountCreationRequest.setConfirmPassword("Lorddsfmsdkdnvkdnvklmdkfvndkvdkvfsdmflsfmsdfmdlvmdlvmdlmvldm"
                 + "vldmvdnslknlkvndklvlvkclkdkvndkvndknvkjdvkvkd");
+        accountCreationRequest.setSubscribed(true);
+
+        expectedException.expect(RequestValidationException.class);
+        accountCreationValidationService.validate(accountCreationRequest);
+    }
+
+    @Test
+    public void testValidationFailed_PasswordLengthGreaterThanMaxLen() {
+        log.info(">> testValidationFailed_PasswordLengthGreaterThanMaxLen()");
+        AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
+        accountCreationRequest.setFirstName("Tom");
+        accountCreationRequest.setMiddleName(null);
+        accountCreationRequest.setLastName("Lord");
+        accountCreationRequest.setEmailAddress("Tom.lord@tomlord.com");
+        accountCreationRequest.setPassword("Lorddsfmsdkdnvkdnvklmdkfvndkvdkvfsdmflsfmsdfmdlvmdlvmdlmvldm"
+                + "vldmvdnslknlkvndklvlvkclkdkvndkvndknvkjdvkvkd");
+        accountCreationRequest.setConfirmPassword("123456");
         accountCreationRequest.setSubscribed(true);
 
         expectedException.expect(RequestValidationException.class);

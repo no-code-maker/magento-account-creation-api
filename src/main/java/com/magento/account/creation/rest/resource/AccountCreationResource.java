@@ -40,6 +40,7 @@ public class AccountCreationResource {
 
     }
 
+    @SuppressWarnings("rawtypes")
     @PostMapping("/magento/account/create")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
@@ -85,7 +86,9 @@ public class AccountCreationResource {
             } else {
                 response.setStatus(HttpStatus.SC_OK);
                 accountCreationAbstractResponse = accountCreationResponse;
-                accountCreationAbstractResponse.setStatusDescription(AccountCreationConstants.REQUEST_SUCCESS);
+                if (accountCreationAbstractResponse != null) {
+                    accountCreationAbstractResponse.setStatusDescription(AccountCreationConstants.REQUEST_SUCCESS);
+                }
             }
         }
         log.info("{}", accountCreationAbstractResponse);

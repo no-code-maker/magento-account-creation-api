@@ -41,24 +41,17 @@ public class AccountCreationServiceImpl implements AccountCreationService {
         String formKey = this.accountCreationDao.getAccountCreationSessionFormKey(closeableHttpClient,
                 new BasicResponseHandler());
 
-        AccountCreationResponse accountCreationResponse = this.accountCreationDao
+        return this.accountCreationDao
                 .createAccountPost(closeableHttpClient, formKey, accountCreationValidatedRequest);
-
-        return accountCreationResponse;
-
     }
 
     private CloseableHttpClient createHttpClient() {
-
         final BasicCookieStore cookieStore = new BasicCookieStore();
-        CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy())
+        return HttpClientBuilder.create().setRedirectStrategy(new LaxRedirectStrategy())
                 .setConnectionManager(new PoolingHttpClientConnectionManager())
                 .setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT).setMaxRedirects(100).build())
                 .setDefaultCookieStore(cookieStore)
                 .setRetryHandler(new StandardHttpRequestRetryHandler())
                 .build();
-
-        return closeableHttpClient;
-
     }
 }

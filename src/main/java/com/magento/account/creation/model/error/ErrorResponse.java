@@ -26,6 +26,9 @@ public class ErrorResponse implements Serializable {
 
     private String path;
 
+    private ErrorResponse() {
+    }
+
     public ErrorResponse(HttpStatus status, String errorDescription) {
         this.timestamp = LocalDateTime.now();
         this.status = status.value();

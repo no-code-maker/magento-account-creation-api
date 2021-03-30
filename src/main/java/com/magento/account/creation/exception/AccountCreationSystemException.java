@@ -2,9 +2,11 @@ package com.magento.account.creation.exception;
 
 import com.magento.account.creation.model.error.ErrorResponse;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class AccountCreationSystemException extends RuntimeException implements Serializable {
 

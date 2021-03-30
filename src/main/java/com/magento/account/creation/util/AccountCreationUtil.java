@@ -11,31 +11,24 @@ import org.springframework.http.HttpStatus;
 
 public class AccountCreationUtil {
 
+    private AccountCreationUtil() {
+    }
+
     public static ErrorResponse getEmptyValidationResponse() {
 
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
-                "Request Validation Error");
-
-        return errorResponse;
-
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, "Request Validation Error");
     }
 
     public static ErrorResponse getEmptySystemValidationResponse() {
 
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                "System Error Occurred");
-
-        return errorResponse;
-
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "System Error Occurred");
     }
 
     public static String findFormKey(String htmlBody) {
 
         String ss = htmlBody.split("<input type=\"hidden\" name=\"form_key\" value=\"")[1];
 
-        String formKey = ss.split("\" />", 2)[0];
-
-        return formKey;
+        return ss.split("\" />", 2)[0];
 
     }
 

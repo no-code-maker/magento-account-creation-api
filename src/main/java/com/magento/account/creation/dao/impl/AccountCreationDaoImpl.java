@@ -19,9 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
-
 /**
  * @author Rajeev Krishna
  * @description Implementation layer for magento account creation api.
@@ -56,15 +53,11 @@ public class AccountCreationDaoImpl implements AccountCreationDao {
             } catch (AccountCreationRetryableException acrEx) {
                 if (++count == AccountCreationConstants.ACCT_CREATION_GET_MAX_RETRIES) {
                     throw new AccountCreationRetryableException(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                            AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION +
-                                    acrEx.getCause()));
-                } else {
-                    continue;
+                            AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION + acrEx.getCause()));
                 }
             } catch (Exception ex) {
                 throw new AccountCreationSystemException(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                        AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION +
-                                ex.getCause()));
+                        AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION + ex.getCause()));
             }
         }
     }
@@ -83,8 +76,7 @@ public class AccountCreationDaoImpl implements AccountCreationDao {
                 }
             } catch (Exception ex) {
                 throw new AccountCreationSystemException(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                        AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION +
-                                ex.getCause()));
+                        AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION + ex.getCause()));
             }
 
         } finally {
@@ -92,17 +84,11 @@ public class AccountCreationDaoImpl implements AccountCreationDao {
                 if (closeableHttpClient != null) {
                     closeableHttpClient.close();
                 }
-            } catch (IOException ex) {
-                throw new AccountCreationSystemException(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                        AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION +
-                                ex.getCause()));
+            } catch (Exception ex) {
+                log.error(AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION + ex.getCause());
             }
 
         }
-
-        AccountCreationResponse accountCreationResponse = AccountCreationUtil
-                .createAccountCreationResponseObject(accountCreationRequest);
-        return accountCreationResponse;
+        return AccountCreationUtil.createAccountCreationResponseObject(accountCreationRequest);
     }
-
 }

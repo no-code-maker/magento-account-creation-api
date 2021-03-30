@@ -21,14 +21,14 @@ public class AccountCreationValidationServiceImpl implements AccountCreationVali
             validateMandatoryNameField(accountCreationRequest.getLastName(), AccountCreationConstants.LAST_NAME);
 
             if (accountCreationRequest.getMiddleName() != null) {
-                validateNonMandatoryNameField(accountCreationRequest.getMiddleName(), AccountCreationConstants.MIDDLE_NAME);
+                validateNonMandatoryNameField(accountCreationRequest.getMiddleName());
             } else {
                 accountCreationRequest.setMiddleName(StringUtils.EMPTY);
             }
 
-            validateEmail(accountCreationRequest.getEmailAddress(), AccountCreationConstants.EMAIL);
-            validatePasswords(accountCreationRequest.getPassword(), accountCreationRequest.getConfirmPassword(),
-                    AccountCreationConstants.PASSWORD);
+            validateEmail(accountCreationRequest.getEmailAddress());
+            validatePasswords(accountCreationRequest.getPassword(), accountCreationRequest.getConfirmPassword()
+            );
         } else {
             throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                     AccountCreationConstants.ERR_CODE_VALIDATION +
@@ -59,38 +59,38 @@ public class AccountCreationValidationServiceImpl implements AccountCreationVali
         }
     }
 
-    private void validateNonMandatoryNameField(String nameValue, String fieldName) {
+    private void validateNonMandatoryNameField(String nameValue) {
         // validate name written in every language via unicode property.
         // Excludes numbers and special character.
         if (StringUtils.isNotBlank(nameValue)) {
             if (nameValue.length() > AccountCreationConstants.STRING_FIELD_SIZE) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                                fieldName + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
+                                AccountCreationConstants.MIDDLE_NAME + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
             }
             if (!nameValue.matches("^[\\p{L} .'-]+$")) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                                fieldName + AccountCreationConstants.FIELD_REGEX + nameValue));
+                                AccountCreationConstants.MIDDLE_NAME + AccountCreationConstants.FIELD_REGEX + nameValue));
             }
         }
     }
 
-    private void validateEmail(String email, String fieldName) {
+    private void validateEmail(String email) {
 
         if (StringUtils.isNotBlank(email) && email.length() > AccountCreationConstants.STRING_FIELD_SIZE) {
             throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                     AccountCreationConstants.ERR_CODE_VALIDATION +
-                            fieldName + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
+                            AccountCreationConstants.EMAIL + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
         }
         if (!EmailValidator.getInstance().isValid(email)) {
             throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                     AccountCreationConstants.ERR_CODE_VALIDATION +
-                            fieldName + AccountCreationConstants.FIELD_REGEX + email));
+                            AccountCreationConstants.EMAIL + AccountCreationConstants.FIELD_REGEX + email));
         }
     }
 
-    private void validatePasswords(String password, String confirmPassword, String fieldName) {
+    private void validatePasswords(String password, String confirmPassword) {
 
         if (StringUtils.isNotBlank(password) && StringUtils.isNotBlank(confirmPassword)) {
 
@@ -98,24 +98,24 @@ public class AccountCreationValidationServiceImpl implements AccountCreationVali
                     confirmPassword.length() > AccountCreationConstants.STRING_FIELD_SIZE) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                                fieldName + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
+                                AccountCreationConstants.PASSWORD + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
             }
             if (password.length() < AccountCreationConstants.PASSWORD_MIN_FIELD_SIZE ||
                     confirmPassword.length() < AccountCreationConstants.PASSWORD_MIN_FIELD_SIZE) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                                fieldName + AccountCreationConstants.ERR_FIELD_LENGTH_LOW));
+                                AccountCreationConstants.PASSWORD + AccountCreationConstants.ERR_FIELD_LENGTH_LOW));
             }
 
             if (!password.equals(confirmPassword)) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                                fieldName + AccountCreationConstants.PASSWORD_MATCH));
+                                AccountCreationConstants.PASSWORD + AccountCreationConstants.PASSWORD_MATCH));
             }
         } else {
             throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                     AccountCreationConstants.ERR_CODE_VALIDATION +
-                            fieldName + AccountCreationConstants.REQUEST_OBJECT_VALUE_NULL));
+                            AccountCreationConstants.PASSWORD + AccountCreationConstants.REQUEST_OBJECT_VALUE_NULL));
         }
     }
 }

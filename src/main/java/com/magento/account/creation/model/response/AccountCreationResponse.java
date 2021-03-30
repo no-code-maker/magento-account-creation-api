@@ -10,6 +10,8 @@ import java.io.Serializable;
  */
 public class AccountCreationResponse extends AccountCreationAbstractResponse<Account> implements Serializable {
 
+    private static final long serialVersionUID = -408569639810555783L;
+
     public AccountCreationResponse(Account account) {
         super(account);
     }
