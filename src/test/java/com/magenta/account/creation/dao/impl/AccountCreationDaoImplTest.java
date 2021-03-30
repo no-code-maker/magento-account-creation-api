@@ -4,7 +4,9 @@ import com.magento.account.creation.dao.AccountCreationDao;
 import com.magento.account.creation.dao.impl.AccountCreationDaoImpl;
 import com.magento.account.creation.exception.AccountCreationRetryableException;
 import com.magento.account.creation.exception.AccountCreationSystemException;
+import com.magento.account.creation.model.Account;
 import com.magento.account.creation.model.request.AccountCreationRequest;
+import com.magento.account.creation.model.response.AccountCreationResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -126,7 +128,68 @@ public class AccountCreationDaoImplTest {
         when(closeableHttpResponse.getStatusLine()).thenReturn(statusLine);
         when(statusLine.getStatusCode()).thenReturn(200);
 
-        accountCreationDao.createAccountPost(closeableHttpClient, "9999999", accountCreationRequest);
+        AccountCreationResponse accountCreationResponse = accountCreationDao
+                .createAccountPost(closeableHttpClient, "9999999", accountCreationRequest);
+
+        Assert.assertEquals(accountCreationResponse.getResult().getFirstName(), accountCreationRequest.getFirstName());
+        Assert.assertEquals(accountCreationResponse.getResult().getMiddleName(), accountCreationRequest.getMiddleName());
+        Assert.assertEquals(accountCreationResponse.getResult().getLastName(), accountCreationRequest.getLastName());
+        Assert.assertEquals(accountCreationResponse.getResult().getEmailAddress(), accountCreationRequest.getEmailAddress());
+        Assert.assertEquals(accountCreationResponse.getResult().isSubscribed(), accountCreationRequest.isSubscribed());
+
         log.info("<< testCreateAccountPost_Successful()");
+    }
+
+    @Test
+    public void testCreateAccountPost_NonSuccessful_ResponseCode() throws Exception {
+        log.info(">> testCreateAccountPost_NonSuccessful_ResponseCode()");
+
+        String servicePostUrl = "http://107.23.133.112/customer/account/createpost/";
+
+        FieldSetter.setField(accountCreationDao,
+                AccountCreationDaoImpl.class.getDeclaredField("servicePostUrl"), servicePostUrl);
+
+        expectedException.expect(AccountCreationSystemException.class);
+
+        AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
+        accountCreationRequest.setFirstName("Tom");
+        accountCreationRequest.setMiddleName("C");
+        accountCreationRequest.setLastName("Lord");
+        accountCreationRequest.setEmailAddress("tom.lord@tomlord.com");
+        accountCreationRequest.setPassword("123456");
+        accountCreationRequest.setConfirmPassword("123456");
+        accountCreationRequest.setSubscribed(true);
+
+        when(closeableHttpClient.execute(Mockito.any(HttpPost.class))).thenReturn(closeableHttpResponse);
+
+        accountCreationDao.createAccountPost(closeableHttpClient, "9999999", accountCreationRequest);
+        log.info("<< testCreateAccountPost_NonSuccessful_ResponseCode()");
+    }
+
+
+    @Test
+    public void testCreateAccountPost_ExceptionOccurred() throws Exception {
+        log.info(">> testCreateAccountPost_ExceptionOccurred()");
+
+        String servicePostUrl = "http://107.23.133.112/customer/account/createpost/";
+
+        FieldSetter.setField(accountCreationDao,
+                AccountCreationDaoImpl.class.getDeclaredField("servicePostUrl"), servicePostUrl);
+
+        expectedException.expect(AccountCreationSystemException.class);
+
+        AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
+        accountCreationRequest.setFirstName("Tom");
+        accountCreationRequest.setMiddleName("C");
+        accountCreationRequest.setLastName("Lord");
+        accountCreationRequest.setEmailAddress("tom.lord@tomlord.com");
+        accountCreationRequest.setPassword("123456");
+        accountCreationRequest.setConfirmPassword("123456");
+        accountCreationRequest.setSubscribed(true);
+
+        when(closeableHttpClient.execute(Mockito.any(HttpPost.class))).thenReturn(null);
+
+        accountCreationDao.createAccountPost(closeableHttpClient, "9999999", accountCreationRequest);
+        log.info("<< testCreateAccountPost_ExceptionOccurred()");
     }
 }

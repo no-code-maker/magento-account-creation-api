@@ -6,6 +6,7 @@ import com.magento.account.creation.exception.AccountCreationRetryableException;
 import com.magento.account.creation.exception.AccountCreationSystemException;
 import com.magento.account.creation.model.error.ErrorResponse;
 import com.magento.account.creation.model.request.AccountCreationRequest;
+import com.magento.account.creation.model.response.AccountCreationResponse;
 import com.magento.account.creation.util.AccountCreationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -68,8 +69,8 @@ public class AccountCreationDaoImpl implements AccountCreationDao {
         }
     }
 
-    public void createAccountPost(CloseableHttpClient closeableHttpClient, String formKey,
-                                  AccountCreationRequest accountCreationRequest) {
+    public AccountCreationResponse createAccountPost(CloseableHttpClient closeableHttpClient, String formKey,
+                                                     AccountCreationRequest accountCreationRequest) {
         try {
 
             HttpPost httpPost = new HttpPost(this.servicePostUrl);
@@ -98,6 +99,10 @@ public class AccountCreationDaoImpl implements AccountCreationDao {
             }
 
         }
+
+        AccountCreationResponse accountCreationResponse = AccountCreationUtil
+                .createAccountCreationResponseObject(accountCreationRequest);
+        return accountCreationResponse;
     }
 
 }

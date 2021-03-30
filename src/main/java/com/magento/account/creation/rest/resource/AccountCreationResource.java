@@ -32,10 +32,10 @@ import javax.ws.rs.core.MediaType;
 @Slf4j
 public class AccountCreationResource {
 
-    private final AccountCreationService accountCreationService;
+    private AccountCreationService accountCreationService;
 
     @Autowired
-    AccountCreationResource(AccountCreationService accountCreationService) {
+    public AccountCreationResource(AccountCreationService accountCreationService) {
         this.accountCreationService = accountCreationService;
 
     }
@@ -60,8 +60,6 @@ public class AccountCreationResource {
             accountCreationResponse = this.accountCreationService.createAccount(accountCreationRequest);
 
         } catch (RequestValidationException ex) {
-            response.setStatus(ex.getErrorResponse().getStatus());
-
             if (ex.getErrorResponse() != null) {
                 accountCreationErrorResponse = new AccountCreationErrorResponse(ex.getErrorResponse());
                 accountCreationErrorResponse.setStatusDescription(AccountCreationConstants.REQUEST_FAILED);
@@ -69,9 +67,9 @@ public class AccountCreationResource {
                 accountCreationErrorResponse = new AccountCreationErrorResponse(
                         AccountCreationUtil.getEmptyValidationResponse());
             }
+            response.setStatus(accountCreationErrorResponse.getResult().getStatus());
 
         } catch (AccountCreationSystemException ex) {
-            response.setStatus(ex.getErrorResponse().getStatus());
             if (ex.getErrorResponse() != null) {
                 accountCreationErrorResponse = new AccountCreationErrorResponse(ex.getErrorResponse());
                 accountCreationErrorResponse.setStatusDescription(AccountCreationConstants.REQUEST_FAILED);
@@ -79,6 +77,7 @@ public class AccountCreationResource {
                 accountCreationErrorResponse = new AccountCreationErrorResponse(
                         AccountCreationUtil.getEmptySystemValidationResponse());
             }
+            response.setStatus(accountCreationErrorResponse.getResult().getStatus());
 
         } finally {
             if (accountCreationErrorResponse != null){

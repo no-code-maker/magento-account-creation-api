@@ -26,8 +26,8 @@ public class AccountCreationServiceImpl implements AccountCreationService {
     private AccountCreationValidationService accountCreationValidationService;
 
     @Autowired
-    AccountCreationServiceImpl(AccountCreationDao accountCreationDao,
-                               AccountCreationValidationService accountCreationValidationService){
+    public AccountCreationServiceImpl(AccountCreationDao accountCreationDao,
+                                      AccountCreationValidationService accountCreationValidationService){
         this.accountCreationDao = accountCreationDao;
         this.accountCreationValidationService = accountCreationValidationService;
     }
@@ -42,9 +42,10 @@ public class AccountCreationServiceImpl implements AccountCreationService {
         String formKey = this.accountCreationDao.getAccountCreationSessionFormKey(closeableHttpClient,
                 new BasicResponseHandler());
 
-        this.accountCreationDao.createAccountPost(closeableHttpClient, formKey, accountCreationValidatedRequest);
+        AccountCreationResponse accountCreationResponse = this.accountCreationDao
+                .createAccountPost(closeableHttpClient, formKey, accountCreationValidatedRequest);
 
-        return AccountCreationUtil.createAccountCreationResponseObject(accountCreationRequest);
+        return accountCreationResponse;
 
     }
 
