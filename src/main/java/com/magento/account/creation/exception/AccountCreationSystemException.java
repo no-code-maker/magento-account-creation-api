@@ -12,15 +12,18 @@ public class AccountCreationSystemException extends RuntimeException implements 
 
     private static final long serialVersionUID = -991589395872686884L;
 
-    private ErrorResponse errorResponse;
+    private final ErrorResponse errorResponse;
 
-    private String errorMessage;
+    private final String errorMessage;
 
-    public AccountCreationSystemException(String errorMessage) {
+    public AccountCreationSystemException(final String errorMessage) {
+
         this.errorMessage = errorMessage;
+        this.errorResponse = null;
     }
 
-    public AccountCreationSystemException(ErrorResponse errorResponse) {
+    public AccountCreationSystemException(final ErrorResponse errorResponse) {
         this.errorResponse = errorResponse;
+        this.errorMessage = null;
     }
 }

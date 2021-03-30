@@ -12,12 +12,17 @@ public class AccountCreationRetryableException extends RuntimeException implemen
 
     private static final long serialVersionUID = -991589395872686884L;
 
-    ErrorResponse errorResponse;
+    private final ErrorResponse errorResponse;
 
-    public AccountCreationRetryableException() {
+    private final String errorMessage;
+
+    public AccountCreationRetryableException(final String errorMessage) {
+        this.errorMessage = errorMessage;
+        this.errorResponse = null;
     }
 
-    public AccountCreationRetryableException(ErrorResponse errorResponse) {
+    public AccountCreationRetryableException(final ErrorResponse errorResponse) {
+        this.errorMessage = null;
         this.errorResponse = errorResponse;
     }
 

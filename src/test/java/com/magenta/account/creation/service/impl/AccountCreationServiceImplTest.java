@@ -76,11 +76,11 @@ public class AccountCreationServiceImplTest {
 
         AccountCreationResponse accountCreationResponse = accountCreationService.createAccount(accountCreationRequest);
 
-        Assert.assertEquals(accountCreationResponse.getResult().getFirstName(), accountCreationRequest.getFirstName());
-        Assert.assertEquals(accountCreationResponse.getResult().getMiddleName(), accountCreationRequest.getMiddleName());
-        Assert.assertEquals(accountCreationResponse.getResult().getLastName(), accountCreationRequest.getLastName());
-        Assert.assertEquals(accountCreationResponse.getResult().getEmailAddress(), accountCreationRequest.getEmailAddress());
-        Assert.assertEquals(accountCreationResponse.getResult().isSubscribed(), accountCreationRequest.isSubscribed());
+        Assert.assertEquals(accountCreationResponse.getAccount().getFirstName(), accountCreationRequest.getFirstName());
+        Assert.assertEquals(accountCreationResponse.getAccount().getMiddleName(), accountCreationRequest.getMiddleName());
+        Assert.assertEquals(accountCreationResponse.getAccount().getLastName(), accountCreationRequest.getLastName());
+        Assert.assertEquals(accountCreationResponse.getAccount().getEmailAddress(), accountCreationRequest.getEmailAddress());
+        Assert.assertEquals(accountCreationResponse.getAccount().isSubscribed(), accountCreationRequest.isSubscribed());
 
         log.info("<< testCreateAccount_Successful()");
 

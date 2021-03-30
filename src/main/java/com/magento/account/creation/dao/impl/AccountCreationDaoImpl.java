@@ -47,7 +47,7 @@ public class AccountCreationDaoImpl implements AccountCreationDao {
                 if (StringUtils.isNotBlank(responseString)) {
                     formKey = AccountCreationUtil.findFormKey(responseString);
                 } else {
-                    throw new AccountCreationRetryableException();
+                    throw new AccountCreationRetryableException(AccountCreationConstants.ERR_MAX_RETRIES_COMPLETED);
                 }
                 return formKey;
             } catch (AccountCreationRetryableException acrEx) {

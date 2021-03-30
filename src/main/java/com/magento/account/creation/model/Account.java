@@ -1,9 +1,8 @@
 package com.magento.account.creation.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  * @author Rajeev Krishna
@@ -11,9 +10,9 @@ import java.io.Serializable;
  */
 @Data
 @Builder
-public class Account implements Serializable {
+@AllArgsConstructor
+public class Account {
 
-    private static final long serialVersionUID = 7988050941548732134L;
     String firstName;
 
     String middleName;

@@ -22,10 +22,6 @@ public class AccountCreationConstants {
 
     public static final String CORRELATION_ID = "correlation-id";
 
-    public static final String SERVICE_PATH = "/magento/account/create";
-
-    public static final int CONNECTION_TIMEOUT = 5000;
-
     public static final int STRING_FIELD_SIZE = 100;
 
     public static final int PASSWORD_MIN_FIELD_SIZE = 6;
@@ -49,7 +45,7 @@ public class AccountCreationConstants {
 
     public static final String FIELD_PASSWORD = "password";
 
-    public static final String FIELD_CONFIRM_PASSWORD = "confirmation";
+    public static final String FIELD_CONFIRM_PASS = "confirmation";
 
     //Error Handling
     public static final String REQUEST_SUCCESS = "Successfully created account";
@@ -70,7 +66,9 @@ public class AccountCreationConstants {
 
     public static final String REQUEST_OBJECT_VALUE_NULL = " request object is found NULL or empty ";
 
-    public static final String PASSWORD_MATCH = " does not match";
+    public static final String FIELD_PASS_MATCH = " does not match";
 
     public static final String ERR_DOWNSTREAM_FAIL_MESSAGE = "Failed to completed registration due to downstream system failure.";
+
+    public static final String ERR_MAX_RETRIES_COMPLETED = " Max retries exhausted";
 }

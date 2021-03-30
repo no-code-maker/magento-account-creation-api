@@ -110,7 +110,7 @@ public class AccountCreationValidationServiceImpl implements AccountCreationVali
             if (!password.equals(confirmPassword)) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                                AccountCreationConstants.PASSWORD + AccountCreationConstants.PASSWORD_MATCH));
+                                AccountCreationConstants.PASSWORD + AccountCreationConstants.FIELD_PASS_MATCH));
             }
         } else {
             throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,

@@ -1,12 +1,13 @@
 package com.magenta.account.creation.rest.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.magento.account.creation.constants.AccountCreationConstants;
 import com.magento.account.creation.exception.AccountCreationSystemException;
 import com.magento.account.creation.exception.RequestValidationException;
 import com.magento.account.creation.model.Account;
 import com.magento.account.creation.model.error.ErrorResponse;
 import com.magento.account.creation.model.request.AccountCreationRequest;
-import com.magento.account.creation.model.response.AccountCreationAbstractResponse;
 import com.magento.account.creation.model.response.AccountCreationResponse;
 import com.magento.account.creation.rest.resource.AccountCreationResource;
 import com.magento.account.creation.service.AccountCreationService;
@@ -23,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,20 +38,18 @@ import static org.mockito.Mockito.when;
 @Slf4j
 public class AccountCreationResourceTest {
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-
     @Mock
     private AccountCreationService accountCreationService;
-
     @InjectMocks
     private AccountCreationResource accountCreationResource;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        // accountCreationResource = new AccountCreationResource(accountCreationService);
     }
 
     @After
@@ -57,7 +57,7 @@ public class AccountCreationResourceTest {
     }
 
     @Test
-    public void testCreateAccount_Successful() {
+    public void testCreateAccount_Successful() throws JsonProcessingException {
         log.info(">> testCreateAccount_Successful()");
 
         HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
@@ -74,20 +74,16 @@ public class AccountCreationResourceTest {
         Account account = Account.builder().firstName("Tom").middleName("C")
                 .lastName("Lord").emailAddress("tom.lord@tomlord.com").subscribed(true).build();
 
-        AccountCreationResponse accountCreationResponse = new AccountCreationResponse(account);
+        AccountCreationResponse accountCreationResponse = new AccountCreationResponse();
+        accountCreationResponse.setAccount(account);
 
         when(accountCreationService.createAccount(accountCreationRequest)).thenReturn(accountCreationResponse);
+        when(httpServletResponse.getStatus()).thenReturn(HttpStatus.OK.value());
 
-        AccountCreationAbstractResponse accountCreationAbstractResponse = accountCreationResource.createAccount(
+        ResponseEntity<String> responseEntity = accountCreationResource.createAccount(
                 "9999999999", accountCreationRequest, httpServletResponse);
 
-        Account resultResponse = (Account) accountCreationAbstractResponse.getResult();
-
-        Assert.assertEquals(resultResponse.getFirstName(), accountCreationRequest.getFirstName());
-        Assert.assertEquals(resultResponse.getMiddleName(), accountCreationRequest.getMiddleName());
-        Assert.assertEquals(resultResponse.getLastName(), accountCreationRequest.getLastName());
-        Assert.assertEquals(resultResponse.getEmailAddress(), accountCreationRequest.getEmailAddress());
-        Assert.assertEquals(resultResponse.isSubscribed(), accountCreationRequest.isSubscribed());
+        Assert.assertEquals(HttpStatus.OK.value(), responseEntity.getStatusCodeValue());
 
         log.info("<< testCreateAccount_Successful()");
 
@@ -103,11 +99,10 @@ public class AccountCreationResourceTest {
         AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
         when(accountCreationService.createAccount(accountCreationRequest)).thenThrow(new RequestValidationException(
                 AccountCreationConstants.ERR_CODE_VALIDATION));
-
-        AccountCreationAbstractResponse accountCreationAbstractResponse =
+        when(httpServletResponse.getStatus()).thenReturn(HttpStatus.BAD_REQUEST.value());
+        ResponseEntity<String> responseEntity =
                 accountCreationResource.createAccount("9999999999", accountCreationRequest, httpServletResponse);
-        ErrorResponse errorResponse = (ErrorResponse) accountCreationAbstractResponse.getResult();
-        Assert.assertEquals(org.apache.http.HttpStatus.SC_BAD_REQUEST, errorResponse.getStatus());
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
 
         log.info("<<testCreateAccount_FailedValidation_EmptyValidationResponse()");
     }
@@ -124,11 +119,11 @@ public class AccountCreationResourceTest {
         when(accountCreationService.createAccount(accountCreationRequest)).thenThrow(
                 new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION)));
-
-        AccountCreationAbstractResponse accountCreationAbstractResponse =
+        when(httpServletResponse.getStatus()).thenReturn(HttpStatus.BAD_REQUEST.value());
+        ResponseEntity<String> responseEntity =
                 accountCreationResource.createAccount("9999999999", accountCreationRequest, httpServletResponse);
-        ErrorResponse errorResponse = (ErrorResponse) accountCreationAbstractResponse.getResult();
-        Assert.assertEquals(org.apache.http.HttpStatus.SC_BAD_REQUEST, errorResponse.getStatus());
+
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         log.info("<< testCreateAccount_FailedValidation_Response()");
     }
 
@@ -145,10 +140,10 @@ public class AccountCreationResourceTest {
                 new AccountCreationSystemException(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
                         AccountCreationConstants.ERR_CODE_SYSTEM_EXCEPTION)));
 
-        AccountCreationAbstractResponse accountCreationAbstractResponse =
+        when(httpServletResponse.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        ResponseEntity<String> responseEntity =
                 accountCreationResource.createAccount("9999999999", accountCreationRequest, httpServletResponse);
-        ErrorResponse errorResponse = (ErrorResponse) accountCreationAbstractResponse.getResult();
-        Assert.assertEquals(org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR, errorResponse.getStatus());
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
         log.info("<< testCreateAccount_SystemException_Response()");
     }
 
@@ -162,11 +157,10 @@ public class AccountCreationResourceTest {
         AccountCreationRequest accountCreationRequest = new AccountCreationRequest();
 
         when(accountCreationService.createAccount(accountCreationRequest)).thenThrow(AccountCreationSystemException.class);
-
-        AccountCreationAbstractResponse accountCreationAbstractResponse =
+        when(httpServletResponse.getStatus()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        ResponseEntity<String> responseEntity =
                 accountCreationResource.createAccount("9999999999", accountCreationRequest, httpServletResponse);
-        ErrorResponse errorResponse = (ErrorResponse) accountCreationAbstractResponse.getResult();
-        Assert.assertEquals(org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR, errorResponse.getStatus());
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
         log.info("<< testCreateAccount_SystemException_EmptyResponse()");
     }
 }

@@ -1,27 +1,39 @@
 package com.magento.account.creation.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.magento.account.creation.constants.AccountCreationConstants;
 import com.magento.account.creation.model.Account;
 import com.magento.account.creation.model.error.ErrorResponse;
 import com.magento.account.creation.model.request.AccountCreationRequest;
+import com.magento.account.creation.model.response.AccountCreationErrorResponse;
 import com.magento.account.creation.model.response.AccountCreationResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.springframework.http.HttpStatus;
 
+@Slf4j
 public class AccountCreationUtil {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private AccountCreationUtil() {
     }
 
-    public static ErrorResponse getEmptyValidationResponse() {
+    public static AccountCreationErrorResponse getEmptyValidationResponse() {
 
-        return new ErrorResponse(HttpStatus.BAD_REQUEST, "Request Validation Error");
+        AccountCreationErrorResponse accountCreationErrorResponse = new AccountCreationErrorResponse();
+        accountCreationErrorResponse.setErrorResponse(new ErrorResponse(HttpStatus.BAD_REQUEST, "Request Validation Error"));
+        return accountCreationErrorResponse;
     }
 
-    public static ErrorResponse getEmptySystemValidationResponse() {
+    public static AccountCreationErrorResponse getEmptySystemValidationResponse() {
 
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "System Error Occurred");
+        AccountCreationErrorResponse accountCreationErrorResponse = new AccountCreationErrorResponse();
+        accountCreationErrorResponse.setErrorResponse(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "System Error Occurred"));
+
+        return accountCreationErrorResponse;
     }
 
     public static String findFormKey(String htmlBody) {
@@ -43,7 +55,7 @@ public class AccountCreationUtil {
                 .addTextBody(AccountCreationConstants.FIELD_LAST_NAME, accountCreationRequest.getLastName())
                 .addTextBody(AccountCreationConstants.FIELD_EMAIL, accountCreationRequest.getEmailAddress())
                 .addTextBody(AccountCreationConstants.FIELD_PASSWORD, accountCreationRequest.getPassword())
-                .addTextBody(AccountCreationConstants.FIELD_CONFIRM_PASSWORD, accountCreationRequest.getConfirmPassword())
+                .addTextBody(AccountCreationConstants.FIELD_CONFIRM_PASS, accountCreationRequest.getConfirmPassword())
                 .build();
     }
 
@@ -55,8 +67,35 @@ public class AccountCreationUtil {
                 .lastName(accountCreationRequest.getLastName())
                 .emailAddress(accountCreationRequest.getEmailAddress())
                 .subscribed(accountCreationRequest.isSubscribed()).build();
+        AccountCreationResponse accountCreationResponse = new AccountCreationResponse();
+        accountCreationResponse.setAccount(account);
 
-        return new AccountCreationResponse(account);
+        return accountCreationResponse;
     }
 
+    public static String getJsonStringResponse(AccountCreationResponse accountCreationResponse) {
+
+        String jsonStringResponse = null;
+        try {
+            if (accountCreationResponse != null) {
+                jsonStringResponse = objectMapper.writeValueAsString(accountCreationResponse);
+            }
+        } catch (JsonProcessingException jpEx) {
+            log.error("Failed to convert the response object {}", accountCreationResponse);
+        }
+        return jsonStringResponse;
+    }
+
+    public static String getJsonStringErrorResponse(AccountCreationErrorResponse accountCreationErrorResponse) {
+
+        String jsonStringResponse = null;
+        try {
+            if (accountCreationErrorResponse != null) {
+                jsonStringResponse = objectMapper.writeValueAsString(accountCreationErrorResponse);
+            }
+        } catch (JsonProcessingException jpEx) {
+            log.error("Failed to convert the response object {}", accountCreationErrorResponse);
+        }
+        return jsonStringResponse;
+    }
 }

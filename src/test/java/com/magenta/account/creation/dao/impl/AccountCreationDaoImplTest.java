@@ -130,11 +130,11 @@ public class AccountCreationDaoImplTest {
         AccountCreationResponse accountCreationResponse = accountCreationDao
                 .createAccountPost(closeableHttpClient, "9999999", accountCreationRequest);
 
-        Assert.assertEquals(accountCreationResponse.getResult().getFirstName(), accountCreationRequest.getFirstName());
-        Assert.assertEquals(accountCreationResponse.getResult().getMiddleName(), accountCreationRequest.getMiddleName());
-        Assert.assertEquals(accountCreationResponse.getResult().getLastName(), accountCreationRequest.getLastName());
-        Assert.assertEquals(accountCreationResponse.getResult().getEmailAddress(), accountCreationRequest.getEmailAddress());
-        Assert.assertEquals(accountCreationResponse.getResult().isSubscribed(), accountCreationRequest.isSubscribed());
+        Assert.assertEquals(accountCreationResponse.getAccount().getFirstName(), accountCreationRequest.getFirstName());
+        Assert.assertEquals(accountCreationResponse.getAccount().getMiddleName(), accountCreationRequest.getMiddleName());
+        Assert.assertEquals(accountCreationResponse.getAccount().getLastName(), accountCreationRequest.getLastName());
+        Assert.assertEquals(accountCreationResponse.getAccount().getEmailAddress(), accountCreationRequest.getEmailAddress());
+        Assert.assertEquals(accountCreationResponse.getAccount().isSubscribed(), accountCreationRequest.isSubscribed());
 
         log.info("<< testCreateAccountPost_Successful()");
     }

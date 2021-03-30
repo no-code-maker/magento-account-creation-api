@@ -12,15 +12,17 @@ public class RequestValidationException extends RuntimeException implements Seri
 
     private static final long serialVersionUID = 7328684733459995628L;
 
-    private ErrorResponse errorResponse;
+    private final ErrorResponse errorResponse;
 
-    private String errorMessage;
+    private final String errorMessage;
 
     public RequestValidationException(String errorMessage) {
         this.errorMessage = errorMessage;
+        this.errorResponse = null;
     }
 
     public RequestValidationException(ErrorResponse errorResponse) {
         this.errorResponse = errorResponse;
+        this.errorMessage = null;
     }
 }
