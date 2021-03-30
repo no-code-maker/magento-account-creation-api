@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author Rajeev Krishna
- * @description Implementation layer for magento account creation api.
+ * @description DAOImplementation layer for magento account creation api.
  */
 @Service
 @Slf4j

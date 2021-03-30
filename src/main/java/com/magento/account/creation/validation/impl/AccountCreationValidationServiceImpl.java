@@ -10,6 +10,10 @@ import org.apache.commons.validator.EmailValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author Rajeev Krishna
+ * @description Validation layer implementation for magento account creation api.
+ */
 @Service
 public class AccountCreationValidationServiceImpl implements AccountCreationValidationService {
 

@@ -6,6 +6,10 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
+/**
+ * @author Rajeev Krishna
+ * @description Exception for retrying.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class AccountCreationRetryableException extends RuntimeException implements Serializable {

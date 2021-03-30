@@ -6,6 +6,10 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
+/**
+ * @author Rajeev Krishna
+ * @description RequestValidationException.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class RequestValidationException extends RuntimeException implements Serializable {

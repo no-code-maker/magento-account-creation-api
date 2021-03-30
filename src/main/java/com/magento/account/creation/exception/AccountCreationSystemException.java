@@ -6,6 +6,10 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
+/**
+ * @author Rajeev Krishna
+ * @description AccountCreationSystemException.
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class AccountCreationSystemException extends RuntimeException implements Serializable {

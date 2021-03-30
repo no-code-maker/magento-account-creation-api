@@ -13,6 +13,10 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.springframework.http.HttpStatus;
 
+/**
+ * @author Rajeev Krishna
+ * @description Account Creation Util class for magento account creation api.
+ */
 @Slf4j
 public class AccountCreationUtil {
 
