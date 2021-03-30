@@ -73,8 +73,6 @@ public class AccountCreationValidationServiceImpl implements AccountCreationVali
                         AccountCreationConstants.ERR_CODE_VALIDATION +
                                 fieldName + AccountCreationConstants.FIELD_REGEX + nameValue));
             }
-        } else {
-
         }
     }
 
@@ -114,6 +112,10 @@ public class AccountCreationValidationServiceImpl implements AccountCreationVali
                         AccountCreationConstants.ERR_CODE_VALIDATION +
                                 fieldName + AccountCreationConstants.PASSWORD_MATCH));
             }
+        } else {
+            throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
+                    AccountCreationConstants.ERR_CODE_VALIDATION +
+                            fieldName + AccountCreationConstants.REQUEST_OBJECT_VALUE_NULL));
         }
     }
 }

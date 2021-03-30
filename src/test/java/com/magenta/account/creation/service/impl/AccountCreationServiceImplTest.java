@@ -12,9 +12,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -32,9 +30,6 @@ import static org.mockito.Mockito.when;
 @Slf4j
 public class AccountCreationServiceImplTest {
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
     @InjectMocks
     private AccountCreationServiceImpl accountCreationService;
 
@@ -47,7 +42,6 @@ public class AccountCreationServiceImplTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        accountCreationService = new AccountCreationServiceImpl(accountCreationDao, accountCreationValidationService);
     }
 
     @After
