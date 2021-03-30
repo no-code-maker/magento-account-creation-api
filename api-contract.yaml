@@ -16,6 +16,7 @@ produces:
 
 tags:
   - name: magento
+  - name: account-creation
   - name: spring-boot
 
 paths:
@@ -30,6 +31,16 @@ paths:
         description: ID needed for tracking request within microservicee application.
         required: false
         type: String
+      - name: Accept
+          in: header
+          description: Api expected response type. application/json
+          required: true
+          type: String
+      - name: Content-Type
+          in: header
+          description: Describes the format the body of request is being sent. application/json
+          required: true
+          type: String
       - name: body
         in: body
         required: true
@@ -37,3 +48,104 @@ paths:
 
     responses:
       200:
+        description: Account Successfully Created.
+        schema:
+          $ref: '#/definitions/AccountCreationResponse'
+      400:
+        description: Request Validation Failed.
+        schema:
+          $ref: '#/definitions/AccountCreationErrorResponse'
+      409:
+        description: Duplicate Account Creation Request Failure.
+        schema:
+          $ref: '#/definitions/AccountCreationErrorResponse'
+      500:
+        description: Internal Server Error.
+        schema:
+          $ref: '#/definitions/AccountCreationErrorResponse'
+
+  AccountCreationRequest:
+    properties:
+      firstName:
+        description: Account holder First Name.
+        type: String
+        required: true
+      middleName:
+        description: Account holder Middle Name.
+        type: String
+        required: false
+      lastName:
+        description: Account holder Last Name.
+        type: String
+        required: true
+      emailAddress:
+        description: Account holder email address.
+        type: String
+        required: true
+      password:
+        description: Account holder password.
+        type: String
+        required: true
+      confirmPassword:
+        description: Account holder confirm password.
+        type: String
+        required: true
+
+  AccountCreationResponse:
+    properties:
+      statusDescription:
+        description: Response Status of the request.
+        type: String
+      account:
+        description: Account details as part of response confirmation.
+        schema:
+          $ref: '#/definitions/Account'
+
+  Account:
+    properties:
+      firstName:
+        description: Account holder First Name.
+        type: String
+      middleName:
+        description: Account holder Middle Name.
+        type: String
+      lastName:
+        description: Account holder Last Name.
+        type: String
+      emailAddress:
+        description: Account holder email address.
+        type: String
+      subscribed:
+        description: Is subscribed to news letters.
+        type: boolean
+
+  AccountCreationErrorResponse:
+    properties:
+      statusDescription:
+        description: High level description of error occurred.
+        type: String
+      errorResponse:
+        description: Details of exception occurred.
+        schema:
+          $ref: '#/definitions/ErrorResponse'
+
+  ErrorResponse:
+    properties:
+      status:
+        description: http response code.
+        type: String
+      error:
+        description: Cause of failure.
+        type: String
+      timestamp:
+        description: Timestamp at which the exception was occurrred.
+          type: String
+      message:
+        description: Completed error details about the error occurred.
+          type: String
+
+
+
+
+
+
