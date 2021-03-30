@@ -84,7 +84,7 @@ public class AccountCreationResource {
             if (accountCreationErrorResponse != null) {
                 responseJsonString = AccountCreationUtil.getJsonStringErrorResponse(accountCreationErrorResponse);
             } else {
-                response.setStatus(HttpStatus.SC_OK);
+                response.setStatus(HttpStatus.SC_CREATED);
                 if (accountCreationResponse != null) {
                     accountCreationResponse.setStatusDescription(AccountCreationConstants.REQUEST_SUCCESS);
                     responseJsonString = AccountCreationUtil.getJsonStringResponse(accountCreationResponse);

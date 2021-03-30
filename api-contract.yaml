@@ -47,7 +47,7 @@ paths:
         schema: '#/definition/AccountCreationRequest'
 
     responses:
-      200:
+      201:
         description: Account Successfully Created.
         schema:
           $ref: '#/definitions/AccountCreationResponse'

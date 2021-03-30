@@ -78,12 +78,12 @@ public class AccountCreationResourceTest {
         accountCreationResponse.setAccount(account);
 
         when(accountCreationService.createAccount(accountCreationRequest)).thenReturn(accountCreationResponse);
-        when(httpServletResponse.getStatus()).thenReturn(HttpStatus.OK.value());
+        when(httpServletResponse.getStatus()).thenReturn(HttpStatus.CREATED.value());
 
         ResponseEntity<String> responseEntity = accountCreationResource.createAccount(
                 "9999999999", accountCreationRequest, httpServletResponse);
 
-        Assert.assertEquals(HttpStatus.OK.value(), responseEntity.getStatusCodeValue());
+        Assert.assertEquals(HttpStatus.CREATED.value(), responseEntity.getStatusCodeValue());
 
         log.info("<< testCreateAccount_Successful()");
 
