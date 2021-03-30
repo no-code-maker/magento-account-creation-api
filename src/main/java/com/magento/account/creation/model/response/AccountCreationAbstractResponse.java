@@ -1,6 +1,7 @@
 package com.magento.account.creation.model.response;
 
 import lombok.Data;
+
 import java.io.Serializable;
 
 /**
@@ -16,7 +17,7 @@ public class AccountCreationAbstractResponse<T extends Serializable> implements 
 
     private T result;
 
-    public  AccountCreationAbstractResponse( T result) {
+    public AccountCreationAbstractResponse(T result) {
         this.result = result;
     }
 }

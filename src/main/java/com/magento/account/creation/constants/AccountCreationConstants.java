@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
  * @author Rajeev Krishna
  * @description Constant file for holding constants for magento account creation api.
  */
-@NoArgsConstructor( access  = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AccountCreationConstants {
 
     public static final String FIRST_NAME = "[First Name]";
@@ -26,11 +26,11 @@ public class AccountCreationConstants {
 
     public static final int CONNECTION_TIMEOUT = 5000;
 
-    public static final int STRING_FIELD_SIZE  = 100;
+    public static final int STRING_FIELD_SIZE = 100;
 
-    public static final int PASSWORD_MIN_FIELD_SIZE  = 6;
+    public static final int PASSWORD_MIN_FIELD_SIZE = 6;
 
-    public static final int ACCT_CREATION_GET_MAX_RETRIES  = 2;
+    public static final int ACCT_CREATION_GET_MAX_RETRIES = 2;
 
     //Form Constants
     public static final String FIELD_FORM_KEY = "form_key";

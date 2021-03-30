@@ -1,6 +1,5 @@
 package com.magento.account.creation.model.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /**

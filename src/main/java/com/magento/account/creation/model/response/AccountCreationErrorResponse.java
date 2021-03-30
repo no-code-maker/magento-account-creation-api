@@ -1,6 +1,5 @@
 package com.magento.account.creation.model.response;
 
-import com.magento.account.creation.model.Account;
 import com.magento.account.creation.model.error.ErrorResponse;
 
 import java.io.Serializable;

@@ -3,8 +3,8 @@ package com.magento.account.creation.validation.impl;
 import com.magento.account.creation.constants.AccountCreationConstants;
 import com.magento.account.creation.exception.RequestValidationException;
 import com.magento.account.creation.model.error.ErrorResponse;
-import com.magento.account.creation.validation.AccountCreationValidationService;
 import com.magento.account.creation.model.request.AccountCreationRequest;
+import com.magento.account.creation.validation.AccountCreationValidationService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.EmailValidator;
 import org.springframework.http.HttpStatus;
@@ -16,103 +16,103 @@ public class AccountCreationValidationServiceImpl implements AccountCreationVali
     @Override
     public AccountCreationRequest validate(AccountCreationRequest accountCreationRequest) {
 
-            if(accountCreationRequest != null) {
-                validateMandatoryNameField(accountCreationRequest.getFirstName(), AccountCreationConstants.FIRST_NAME);
-                validateMandatoryNameField(accountCreationRequest.getLastName(), AccountCreationConstants.LAST_NAME);
+        if (accountCreationRequest != null) {
+            validateMandatoryNameField(accountCreationRequest.getFirstName(), AccountCreationConstants.FIRST_NAME);
+            validateMandatoryNameField(accountCreationRequest.getLastName(), AccountCreationConstants.LAST_NAME);
 
-                if (accountCreationRequest.getMiddleName() != null) {
-                    validateNonMandatoryNameField(accountCreationRequest.getMiddleName(), AccountCreationConstants.MIDDLE_NAME);
-                } else {
-                    accountCreationRequest.setMiddleName(StringUtils.EMPTY);
-                }
-
-                validateEmail(accountCreationRequest.getEmailAddress(), AccountCreationConstants.EMAIL);
-                validatePasswords(accountCreationRequest.getPassword(), accountCreationRequest.getConfirmPassword(),
-                        AccountCreationConstants.PASSWORD);
+            if (accountCreationRequest.getMiddleName() != null) {
+                validateNonMandatoryNameField(accountCreationRequest.getMiddleName(), AccountCreationConstants.MIDDLE_NAME);
             } else {
-               throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
-                        AccountCreationConstants.ERR_CODE_VALIDATION +
-                                AccountCreationConstants.REQUEST_OBJECT_VALUE_NULL));
+                accountCreationRequest.setMiddleName(StringUtils.EMPTY);
             }
 
-            return accountCreationRequest;
+            validateEmail(accountCreationRequest.getEmailAddress(), AccountCreationConstants.EMAIL);
+            validatePasswords(accountCreationRequest.getPassword(), accountCreationRequest.getConfirmPassword(),
+                    AccountCreationConstants.PASSWORD);
+        } else {
+            throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
+                    AccountCreationConstants.ERR_CODE_VALIDATION +
+                            AccountCreationConstants.REQUEST_OBJECT_VALUE_NULL));
+        }
+
+        return accountCreationRequest;
     }
 
-    private void validateMandatoryNameField(String nameValue, String fieldName){
+    private void validateMandatoryNameField(String nameValue, String fieldName) {
         // validate name written in every language via unicode property.
         // Excludes numbers and special character.
-        if(StringUtils.isNotBlank(nameValue)) {
-            if (nameValue.length() > AccountCreationConstants.STRING_FIELD_SIZE){
+        if (StringUtils.isNotBlank(nameValue)) {
+            if (nameValue.length() > AccountCreationConstants.STRING_FIELD_SIZE) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                        fieldName + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
+                                fieldName + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
             }
-            if (!nameValue.matches("^[\\p{L} .'-]+$")){
+            if (!nameValue.matches("^[\\p{L} .'-]+$")) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                        fieldName + AccountCreationConstants.FIELD_REGEX + nameValue));
+                                fieldName + AccountCreationConstants.FIELD_REGEX + nameValue));
             }
         } else {
             throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                     AccountCreationConstants.ERR_CODE_VALIDATION +
-                    fieldName + AccountCreationConstants.FIELD_VALUE_NULL));
+                            fieldName + AccountCreationConstants.FIELD_VALUE_NULL));
         }
     }
 
-    private void validateNonMandatoryNameField(String nameValue, String fieldName){
+    private void validateNonMandatoryNameField(String nameValue, String fieldName) {
         // validate name written in every language via unicode property.
         // Excludes numbers and special character.
-        if(StringUtils.isNotBlank(nameValue)) {
-            if (nameValue.length() > AccountCreationConstants.STRING_FIELD_SIZE){
+        if (StringUtils.isNotBlank(nameValue)) {
+            if (nameValue.length() > AccountCreationConstants.STRING_FIELD_SIZE) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                        fieldName + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
+                                fieldName + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
             }
-            if (!nameValue.matches("^[\\p{L} .'-]+$")){
+            if (!nameValue.matches("^[\\p{L} .'-]+$")) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                        fieldName + AccountCreationConstants.FIELD_REGEX + nameValue));
+                                fieldName + AccountCreationConstants.FIELD_REGEX + nameValue));
             }
         } else {
 
         }
     }
 
-    private void validateEmail(String email, String fieldName){
+    private void validateEmail(String email, String fieldName) {
 
-        if (StringUtils.isNotBlank(email) && email.length() > AccountCreationConstants.STRING_FIELD_SIZE){
+        if (StringUtils.isNotBlank(email) && email.length() > AccountCreationConstants.STRING_FIELD_SIZE) {
             throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                     AccountCreationConstants.ERR_CODE_VALIDATION +
-                    fieldName + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
+                            fieldName + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
         }
-        if(!EmailValidator.getInstance().isValid(email)) {
+        if (!EmailValidator.getInstance().isValid(email)) {
             throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                     AccountCreationConstants.ERR_CODE_VALIDATION +
-                    fieldName + AccountCreationConstants.FIELD_REGEX + email));
+                            fieldName + AccountCreationConstants.FIELD_REGEX + email));
         }
     }
 
-    private void validatePasswords(String password, String confirmPassword, String fieldName){
+    private void validatePasswords(String password, String confirmPassword, String fieldName) {
 
-        if (StringUtils.isNotBlank(password) && StringUtils.isNotBlank(confirmPassword)){
+        if (StringUtils.isNotBlank(password) && StringUtils.isNotBlank(confirmPassword)) {
 
             if (password.length() > AccountCreationConstants.STRING_FIELD_SIZE ||
-                    confirmPassword.length() > AccountCreationConstants.STRING_FIELD_SIZE){
+                    confirmPassword.length() > AccountCreationConstants.STRING_FIELD_SIZE) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
-                       AccountCreationConstants.ERR_CODE_VALIDATION +
-                       fieldName  + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
+                        AccountCreationConstants.ERR_CODE_VALIDATION +
+                                fieldName + AccountCreationConstants.ERR_FIELD_LENGTH_HIGH));
             }
             if (password.length() < AccountCreationConstants.PASSWORD_MIN_FIELD_SIZE ||
-                    confirmPassword.length() < AccountCreationConstants.PASSWORD_MIN_FIELD_SIZE){
+                    confirmPassword.length() < AccountCreationConstants.PASSWORD_MIN_FIELD_SIZE) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                                fieldName  + AccountCreationConstants.ERR_FIELD_LENGTH_LOW));
+                                fieldName + AccountCreationConstants.ERR_FIELD_LENGTH_LOW));
             }
 
-            if (!password.equals(confirmPassword)){
+            if (!password.equals(confirmPassword)) {
                 throw new RequestValidationException(new ErrorResponse(HttpStatus.BAD_REQUEST,
                         AccountCreationConstants.ERR_CODE_VALIDATION +
-                        fieldName + AccountCreationConstants.PASSWORD_MATCH));
+                                fieldName + AccountCreationConstants.PASSWORD_MATCH));
             }
         }
     }

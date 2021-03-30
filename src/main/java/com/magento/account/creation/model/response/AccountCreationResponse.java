@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Rajeev Krishna
  * @description AccountCreationAbstractResponse model class is a successful response for account creation request.
  */
-public class AccountCreationResponse  extends AccountCreationAbstractResponse<Account> implements Serializable {
+public class AccountCreationResponse extends AccountCreationAbstractResponse<Account> implements Serializable {
 
     public AccountCreationResponse(Account account) {
         super(account);

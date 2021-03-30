@@ -2,6 +2,7 @@ package com.magento.account.creation.exception;
 
 import com.magento.account.creation.model.error.ErrorResponse;
 import lombok.Data;
+
 import java.io.Serializable;
 
 @Data

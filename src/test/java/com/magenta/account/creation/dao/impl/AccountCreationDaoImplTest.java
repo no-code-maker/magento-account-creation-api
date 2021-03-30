@@ -4,7 +4,6 @@ import com.magento.account.creation.dao.AccountCreationDao;
 import com.magento.account.creation.dao.impl.AccountCreationDaoImpl;
 import com.magento.account.creation.exception.AccountCreationRetryableException;
 import com.magento.account.creation.exception.AccountCreationSystemException;
-import com.magento.account.creation.model.Account;
 import com.magento.account.creation.model.request.AccountCreationRequest;
 import com.magento.account.creation.model.response.AccountCreationResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -38,16 +37,16 @@ public class AccountCreationDaoImplTest {
 
     @Mock
     private static CloseableHttpClient closeableHttpClient;
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-    @InjectMocks
-    private final AccountCreationDao accountCreationDao = new AccountCreationDaoImpl();
     @Mock
     private static CloseableHttpResponse closeableHttpResponse;
     @Mock
-    private BasicResponseHandler basicResponseHandler;
-    @Mock
     private static StatusLine statusLine;
+    @InjectMocks
+    private final AccountCreationDao accountCreationDao = new AccountCreationDaoImpl();
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+    @Mock
+    private BasicResponseHandler basicResponseHandler;
 
     @Before
     public void setup() {

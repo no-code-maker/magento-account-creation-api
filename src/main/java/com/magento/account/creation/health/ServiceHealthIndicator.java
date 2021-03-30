@@ -1,15 +1,15 @@
 package com.magento.account.creation.health;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import com.magento.account.creation.constants.AccountCreationConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthContributor;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * @author Rajeev Krishna

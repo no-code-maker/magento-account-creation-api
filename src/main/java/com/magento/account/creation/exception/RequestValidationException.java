@@ -12,7 +12,10 @@ public class RequestValidationException extends RuntimeException implements Seri
 
     private ErrorResponse errorResponse;
 
-    public RequestValidationException(){};
+    public RequestValidationException() {
+    }
+
+    ;
 
     public RequestValidationException(ErrorResponse errorResponse) {
         this.errorResponse = errorResponse;

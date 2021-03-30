@@ -12,7 +12,8 @@ public class AccountCreationRetryableException extends RuntimeException implemen
 
     private ErrorResponse errorResponse;
 
-    public AccountCreationRetryableException(){}
+    public AccountCreationRetryableException() {
+    }
 
     public AccountCreationRetryableException(ErrorResponse errorResponse) {
         this.errorResponse = errorResponse;

@@ -29,17 +29,17 @@ public class AccountCreationUtil {
 
     }
 
-    public static String findFormKey(String htmlBody){
+    public static String findFormKey(String htmlBody) {
 
         String ss = htmlBody.split("<input type=\"hidden\" name=\"form_key\" value=\"")[1];
 
-        String formKey = ss.split("\" />" ,2)[0];
+        String formKey = ss.split("\" />", 2)[0];
 
         return formKey;
 
     }
 
-    public static HttpEntity generateFormEntity(String formKey, AccountCreationRequest accountCreationRequest){
+    public static HttpEntity generateFormEntity(String formKey, AccountCreationRequest accountCreationRequest) {
 
         return MultipartEntityBuilder.create()
                 .addTextBody(AccountCreationConstants.FIELD_FORM_KEY, formKey)
@@ -55,9 +55,9 @@ public class AccountCreationUtil {
     }
 
     public static AccountCreationResponse createAccountCreationResponseObject(
-            AccountCreationRequest accountCreationRequest){
+            AccountCreationRequest accountCreationRequest) {
 
-        Account account  = Account.builder().firstName(accountCreationRequest.getFirstName())
+        Account account = Account.builder().firstName(accountCreationRequest.getFirstName())
                 .middleName(accountCreationRequest.getMiddleName())
                 .lastName(accountCreationRequest.getLastName())
                 .emailAddress(accountCreationRequest.getEmailAddress())

@@ -4,7 +4,6 @@ import com.magento.account.creation.dao.AccountCreationDao;
 import com.magento.account.creation.model.request.AccountCreationRequest;
 import com.magento.account.creation.model.response.AccountCreationResponse;
 import com.magento.account.creation.service.AccountCreationService;
-import com.magento.account.creation.util.AccountCreationUtil;
 import com.magento.account.creation.validation.AccountCreationValidationService;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
@@ -27,7 +26,7 @@ public class AccountCreationServiceImpl implements AccountCreationService {
 
     @Autowired
     public AccountCreationServiceImpl(AccountCreationDao accountCreationDao,
-                                      AccountCreationValidationService accountCreationValidationService){
+                                      AccountCreationValidationService accountCreationValidationService) {
         this.accountCreationDao = accountCreationDao;
         this.accountCreationValidationService = accountCreationValidationService;
     }

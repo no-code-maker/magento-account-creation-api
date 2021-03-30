@@ -80,7 +80,7 @@ public class AccountCreationResource {
             response.setStatus(accountCreationErrorResponse.getResult().getStatus());
 
         } finally {
-            if (accountCreationErrorResponse != null){
+            if (accountCreationErrorResponse != null) {
                 accountCreationAbstractResponse = accountCreationErrorResponse;
             } else {
                 response.setStatus(HttpStatus.SC_OK);

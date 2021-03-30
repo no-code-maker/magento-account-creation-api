@@ -1,12 +1,8 @@
 package com.magenta.account.creation.service.impl;
 
 import com.magento.account.creation.dao.AccountCreationDao;
-import com.magento.account.creation.model.Account;
 import com.magento.account.creation.model.request.AccountCreationRequest;
-import com.magento.account.creation.model.response.AccountCreationAbstractResponse;
 import com.magento.account.creation.model.response.AccountCreationResponse;
-import com.magento.account.creation.rest.resource.AccountCreationResource;
-import com.magento.account.creation.service.AccountCreationService;
 import com.magento.account.creation.service.impl.AccountCreationServiceImpl;
 import com.magento.account.creation.util.AccountCreationUtil;
 import com.magento.account.creation.validation.AccountCreationValidationService;
@@ -26,7 +22,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 
 /**
@@ -51,7 +47,7 @@ public class AccountCreationServiceImplTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        accountCreationService = new AccountCreationServiceImpl(accountCreationDao,accountCreationValidationService);
+        accountCreationService = new AccountCreationServiceImpl(accountCreationDao, accountCreationValidationService);
     }
 
     @After
