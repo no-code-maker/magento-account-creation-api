@@ -76,9 +76,9 @@ public class AccountCreationDaoImpl implements AccountCreationDao {
             try (CloseableHttpResponse response = closeableHttpClient.execute(httpPost)) {
                 if (response.getStatusLine().getStatusCode() == 302) {
                     String location = response.getFirstHeader("Location").getValue();
-                    if(!location.equals(serviceIndexUrl)){
-                    throw new RequestValidationException(new ErrorResponse(HttpStatus.CONFLICT,
-                            AccountCreationConstants.ACCOUNT_ALREADY_EXISTS));
+                    if (!location.equals(serviceIndexUrl)) {
+                        throw new RequestValidationException(new ErrorResponse(HttpStatus.CONFLICT,
+                                AccountCreationConstants.ACCOUNT_ALREADY_EXISTS));
                     }
                 } else {
                     throw new AccountCreationSystemException(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
