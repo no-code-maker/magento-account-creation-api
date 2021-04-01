@@ -64,7 +64,7 @@ public class AccountCreationDaoImplTest {
     public void testGetAccountCreationSessionFormKey_Successful() throws Exception {
         log.info(">> testGetAccountCreationSessionFormKey_Successful()");
 
-        String serviceGetUrl = "http://107.23.133.112/customer/account/create/";
+        String serviceGetUrl = "http://54.145.222.147/customer/account/create/";
 
         FieldSetter.setField(accountCreationDao,
                 AccountCreationDaoImpl.class.getDeclaredField("serviceGetUrl"), serviceGetUrl);
@@ -81,7 +81,7 @@ public class AccountCreationDaoImplTest {
         log.info(">> testGetAccountCreationSessionFormKey_RetryableCase()");
 
         expectedException.expect(AccountCreationRetryableException.class);
-        String serviceGetUrl = "http://107.23.133.112/customer/account/create/";
+        String serviceGetUrl = "http://54.145.222.147/customer/account/create/";
 
         FieldSetter.setField(accountCreationDao,
                 AccountCreationDaoImpl.class.getDeclaredField("serviceGetUrl"), serviceGetUrl);
@@ -98,7 +98,7 @@ public class AccountCreationDaoImplTest {
         log.info(">> testGetAccountCreationSessionFormKey_Exception()");
 
         expectedException.expect(AccountCreationSystemException.class);
-        String serviceGetUrl = "http://107.23.133.112/customer/account/create/";
+        String serviceGetUrl = "http://54.145.222.147/customer/account/create/";
 
         FieldSetter.setField(accountCreationDao,
                 AccountCreationDaoImpl.class.getDeclaredField("serviceGetUrl"), serviceGetUrl);
@@ -112,8 +112,8 @@ public class AccountCreationDaoImplTest {
     public void testCreateAccountPost_Successful() throws Exception {
         log.info(">> testCreateAccountPost_Successful()");
 
-        String servicePostUrl = "http://107.23.133.112/customer/account/createpost/";
-        String serviceIndexUrl = "http://107.23.133.112/customer/account/index/";
+        String servicePostUrl = "http://54.145.222.147/customer/account/createpost/";
+        String serviceIndexUrl = "http://54.145.222.147/customer/account/index/";
 
         Header header = mock(Header.class);
         FieldSetter.setField(accountCreationDao,
@@ -152,8 +152,8 @@ public class AccountCreationDaoImplTest {
     public void testCreateAccountPost_DuplicateRequest() throws Exception {
         log.info(">> testCreateAccountPost_Successful()");
 
-        String servicePostUrl = "http://107.23.133.112/customer/account/createpost/";
-        String serviceIndexUrl = "http://107.23.133.112/customer/account/index/";
+        String servicePostUrl = "http://54.145.222.147/customer/account/createpost/";
+        String serviceIndexUrl = "http://54.145.222.147/customer/account/index/";
 
         Header header = mock(Header.class);
         FieldSetter.setField(accountCreationDao,
@@ -187,7 +187,7 @@ public class AccountCreationDaoImplTest {
     public void testCreateAccountPost_NonSuccessful_ResponseCode() throws Exception {
         log.info(">> testCreateAccountPost_NonSuccessful_ResponseCode()");
 
-        String servicePostUrl = "http://107.23.133.112/customer/account/createpost/";
+        String servicePostUrl = "http://54.145.222.147/customer/account/createpost/";
 
         FieldSetter.setField(accountCreationDao,
                 AccountCreationDaoImpl.class.getDeclaredField("servicePostUrl"), servicePostUrl);
@@ -214,7 +214,7 @@ public class AccountCreationDaoImplTest {
     public void testCreateAccountPost_ExceptionOccurred() throws Exception {
         log.info(">> testCreateAccountPost_ExceptionOccurred()");
 
-        String servicePostUrl = "http://107.23.133.112/customer/account/createpost/";
+        String servicePostUrl = "http://54.145.222.147/customer/account/createpost/";
 
         FieldSetter.setField(accountCreationDao,
                 AccountCreationDaoImpl.class.getDeclaredField("servicePostUrl"), servicePostUrl);
@@ -240,7 +240,7 @@ public class AccountCreationDaoImplTest {
     public void testCreateAccountPost_ReturnStatusNonOK() throws Exception {
         log.info(">> testCreateAccountPost_ExceptionOccurred()");
 
-        String servicePostUrl = "http://107.23.133.112/customer/account/createpost/";
+        String servicePostUrl = "http://54.145.222.147/customer/account/createpost/";
 
         FieldSetter.setField(accountCreationDao,
                 AccountCreationDaoImpl.class.getDeclaredField("servicePostUrl"), servicePostUrl);
@@ -268,7 +268,7 @@ public class AccountCreationDaoImplTest {
     public void testCreateAccountPost_HttpClientCloseableException() throws Exception {
         log.info(">> testCreateAccountPost_ExceptionOccurred()");
 
-        String servicePostUrl = "http://107.23.133.112/customer/account/createpost/";
+        String servicePostUrl = "http://54.145.222.147/customer/account/createpost/";
 
         FieldSetter.setField(accountCreationDao,
                 AccountCreationDaoImpl.class.getDeclaredField("servicePostUrl"), servicePostUrl);
